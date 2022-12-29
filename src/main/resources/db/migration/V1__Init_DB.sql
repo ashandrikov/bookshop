@@ -7,12 +7,12 @@ create table if not exists users (
     primary key (id)
 );
 
-insert into users (id, login, password, role)
-    values (1, 'admin', 'admin', 'ADMINISTRATOR');
-insert into users (id, login, password, role)
-    values (2, 'user', 'user', 'USER');
-insert into users (id, login, password, role)
-    values (3, 'editor', 'editor', 'EDITOR');
+insert into users (id, login, password, role, account_non_locked)
+    values (1, 'admin', '$2a$12$abz4SQpigWbke4.75IuXHOAbPEtiH5wSXaFSh0Si0kwzAkGqjrhbu', 'ADMINISTRATOR', true);
+insert into users (id, login, password, role, account_non_locked)
+    values (2, 'user', '$2a$12$Iu.a/M2Go5VfvpehrL656ueDyoaJbEVHz2e86NQ8wdinru3Co8wvi', 'USER', true);
+insert into users (id, login, password, role, account_non_locked)
+    values (3, 'editor', '$2a$12$OhTQp2zYC2KjkRVDbeJ/se2TYKPU1120kuQnQAKjcKIFTDpCQAlIi', 'EDITOR', true);
 
 create table books (
     id bigint not null auto_increment,

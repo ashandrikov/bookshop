@@ -10,12 +10,11 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-//@EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfiguration {
     private final UserServiceImpl userDetailsService;
@@ -26,27 +25,18 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests()
                     .requestMatchers(HttpMethod.POST, "/restapi/auth/signup").permitAll()
                     .requestMatchers(HttpMethod.POST, "/restapi/book").hasAuthority(Role.EDITOR.toString())
-                    .requestMatchers(HttpMethod.GET, "/restapi/admin/users").hasAuthority(Role.ADMINISTRATOR.toString())
+                    .requestMatchers("/restapi/admin/**").hasAuthority(Role.ADMINISTRATOR.toString())
                         .anyRequest().authenticated()
                 .and()
                     .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-//                    .authenticationProvider(authenticationProvider())
                     .httpBasic()
                 .and()
                     .csrf().disable();
         return http.build();
     }
 
-//    @Bean
-//    public DaoAuthenticationProvider authenticationProvider(){
-//        final DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-//        authenticationProvider.setUserDetailsService(userDetailsService);
-//        authenticationProvider.setPasswordEncoder(getEncoder());
-//        return authenticationProvider;
-//    }
-//
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
@@ -54,6 +44,6 @@ public class SecurityConfiguration {
 
     @Bean
     public PasswordEncoder getEncoder() {
-        return NoOpPasswordEncoder.getInstance();
+        return new BCryptPasswordEncoder(12);
     }
 }

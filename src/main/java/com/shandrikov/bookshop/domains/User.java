@@ -1,5 +1,6 @@
 package com.shandrikov.bookshop.domains;
 
+import com.shandrikov.bookshop.DTOs.AuthenticationRequest;
 import com.shandrikov.bookshop.enums.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,7 +11,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,13 +22,10 @@ import java.util.Set;
 @Table(name = "users")
 @Data
 @NoArgsConstructor
-@EqualsAndHashCode(of = "login")
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-//    private String name;
-//    private String lastname;
     @Column(unique = true)
     private String login;
     private String password;
@@ -36,18 +33,8 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-//    @Column(name = "account_non_locked")
-//    private boolean accountNonLocked;
-
-//    @Column(name = "failed_attempt")
-//    private int failedAttempt;
-
-//    public void removeRole(Role role){
-//        if (this.getAuthorities().contains(role)){
-////            userGroups.remove(role);
-//        }
-//    }
-
+    @Column(name = "account_non_locked")
+    private boolean accountNonLocked;
 
     public User(AuthenticationRequest request) {
         this.login = request.getLogin();
@@ -70,14 +57,13 @@ public class User implements UserDetails {
     }
 
     @Override
-    public boolean isAccountNonExpired() {
-        return true;
+    public boolean isAccountNonLocked() {
+        return accountNonLocked;
     }
 
     @Override
-    public boolean isAccountNonLocked() {
+    public boolean isAccountNonExpired() {
         return true;
-//        return accountNonLocked;
     }
 
     @Override
@@ -89,6 +75,5 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
 
 }

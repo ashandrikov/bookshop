@@ -1,4 +1,4 @@
-package com.shandrikov.bookshop.domains;
+package com.shandrikov.bookshop.DTOs;
 
 import lombok.Data;
 
