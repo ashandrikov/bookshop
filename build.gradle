@@ -26,6 +26,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'mysql:mysql-connector-java'
     compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
     compileOnly 'org.flywaydb:flyway-mysql'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }

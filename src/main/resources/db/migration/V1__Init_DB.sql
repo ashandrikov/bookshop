@@ -27,6 +27,21 @@ CREATE TABLE orders
     PRIMARY KEY (id)
 );
 
+CREATE TABLE cart_items
+(
+    id       BIGINT AUTO_INCREMENT NOT NULL,
+    user_id  BIGINT                NULL,
+    book_id  BIGINT                NULL,
+    quantity INT                   NOT NULL,
+    PRIMARY KEY (id)
+);
+
+ALTER TABLE cart_items
+    ADD CONSTRAINT FK_CART_ITEMS_ON_BOOK FOREIGN KEY (book_id) REFERENCES books (id);
+
+ALTER TABLE cart_items
+    ADD CONSTRAINT FK_CART_ITEMS_ON_USER FOREIGN KEY (user_id) REFERENCES users (id);
+
 # ALTER TABLE orders
 #     ADD CONSTRAINT FK_ORDERS_ON_USER FOREIGN KEY (user_id) REFERENCES users (id);
 
