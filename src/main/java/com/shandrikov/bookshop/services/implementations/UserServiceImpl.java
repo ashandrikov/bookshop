@@ -55,8 +55,6 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     public User saveUser(AuthenticationRequest request) {
         User user = new User(request);
         user.setPassword(encoder.encode(user.getPassword()));
-        user.setRole(USER);
-        user.setAccountNonLocked(true);
         try {
             userRepository.save(user);
         } catch (DataIntegrityViolationException ex) {
