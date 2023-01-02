@@ -13,7 +13,6 @@ import lombok.Data;
 public class ShoppingCart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @Column(name = "id", nullable = false)
     private Long id;
 
 //    @ManyToMany()

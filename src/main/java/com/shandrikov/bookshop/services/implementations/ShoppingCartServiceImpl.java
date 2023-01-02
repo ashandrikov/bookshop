@@ -44,14 +44,14 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             cartItem = new CartItem();
             cartItem.setUser(user);
             cartItem.setBook(book);
+            cartItemRepository.save(cartItem);
         }
         if (updatedQuantity > 10) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, INVALID_QUANTITY);
         if (updatedQuantity < 1) {
             cartItemRepository.deleteByUserAndBook(user.getId(), bookId);
             return 0;
         }
-        cartItem.setQuantity(updatedQuantity);
-        cartItemRepository.save(cartItem);
+        cartItemRepository.updateQuantity(updatedQuantity, user.getId(), bookId);
 
         return updatedQuantity;
     }
