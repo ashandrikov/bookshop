@@ -43,7 +43,7 @@ public class User implements UserDetails {
     @Column(name = "account_non_locked")
     private boolean accountNonLocked;
     @OneToOne(cascade = CascadeType.ALL, optional = false, orphanRemoval = true)
-    @JoinColumn(name = "shoppingcart_id", nullable = false)
+    @JoinColumn(name = "shoppingcart_id")
     private ShoppingCart shoppingCart;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")

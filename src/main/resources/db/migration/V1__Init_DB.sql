@@ -21,7 +21,7 @@ CREATE TABLE users (
     login           varchar(255) UNIQUE,
     password        varchar(255),
     role            varchar(255),
-    shoppingcart_id bigint NOT NULL,
+    shoppingcart_id bigint,
     account_non_locked bit,
     PRIMARY KEY (id)
 );
