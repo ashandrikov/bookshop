@@ -1,21 +1,27 @@
-CREATE TABLE if not exists books (
+DROP TABLE IF EXISTS books;
+DROP TABLE IF EXISTS shoppingcarts;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS orders;
+DROP TABLE IF EXISTS cart_items;
+
+CREATE TABLE books (
     id          BIGINT AUTO_INCREMENT NOT NULL,
     author      varchar(25) NOT NULL,
     title       varchar(25) NOT NULL,
     PRIMARY KEY (id)
 );
 
-CREATE TABLE if not exists baskets (
+CREATE TABLE shoppingcarts (
     id          BIGINT AUTO_INCREMENT NOT NULL,
     PRIMARY KEY (id)
 );
 
-CREATE TABLE if not exists users (
-    id          BIGINT AUTO_INCREMENT NOT NULL,
-    login       varchar(255) UNIQUE,
-    password    varchar(255),
-    role        varchar(255),
-    basket_id   bigint NOT NULL,
+CREATE TABLE users (
+    id              BIGINT AUTO_INCREMENT NOT NULL,
+    login           varchar(255) UNIQUE,
+    password        varchar(255),
+    role            varchar(255),
+    shoppingcart_id bigint NOT NULL,
     account_non_locked bit,
     PRIMARY KEY (id)
 );
@@ -46,4 +52,4 @@ ALTER TABLE cart_items
 #     ADD CONSTRAINT FK_ORDERS_ON_USER FOREIGN KEY (user_id) REFERENCES users (id);
 
 ALTER TABLE users
-    ADD CONSTRAINT FK_USERS_ON_BASKET FOREIGN KEY (basket_id) REFERENCES baskets (id);
+    ADD CONSTRAINT FK_USERS_ON_BASKET FOREIGN KEY (shoppingcart_id) REFERENCES shoppingcarts (id);

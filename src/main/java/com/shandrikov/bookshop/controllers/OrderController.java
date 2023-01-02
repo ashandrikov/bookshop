@@ -37,7 +37,7 @@ public class OrderController {
 
     @PostMapping("/user/order")
     public Order create(@AuthenticationPrincipal User user){
-        return orderService.createOrderFromBasket(user);
+        return orderService.createOrderFromShoppingCart(user);
     }
 
 //    @PutMapping("/book/{id}")

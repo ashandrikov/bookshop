@@ -17,6 +17,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -29,6 +30,7 @@ import java.util.Set;
 @Table(name = "users")
 @Data
 @NoArgsConstructor
+@ToString(exclude = "orders")
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,7 +43,7 @@ public class User implements UserDetails {
     @Column(name = "account_non_locked")
     private boolean accountNonLocked;
     @OneToOne(cascade = CascadeType.ALL, optional = false, orphanRemoval = true)
-    @JoinColumn(name = "basket_id", nullable = false)
+    @JoinColumn(name = "shoppingcart_id", nullable = false)
     private ShoppingCart shoppingCart;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")

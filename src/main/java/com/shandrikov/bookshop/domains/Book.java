@@ -1,6 +1,7 @@
 package com.shandrikov.bookshop.domains;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,6 +17,7 @@ import org.hibernate.validator.constraints.Length;
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     private Long id;
     @NotBlank(message = "Author must not be empty")
     @Length(min = 3, message = "Author's name is too short")

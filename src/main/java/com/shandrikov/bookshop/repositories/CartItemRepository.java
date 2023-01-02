@@ -1,5 +1,8 @@
-package com.shandrikov.bookshop.domains;
+package com.shandrikov.bookshop.repositories;
 
+import com.shandrikov.bookshop.domains.Book;
+import com.shandrikov.bookshop.domains.CartItem;
+import com.shandrikov.bookshop.domains.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

@@ -6,7 +6,7 @@ import com.shandrikov.bookshop.domains.User;
 import java.util.List;
 
 public interface OrderService {
-    Order createOrderFromBasket(User user);
+    Order createOrderFromShoppingCart(User user);
 
     List<Order> getAllOrders();
 

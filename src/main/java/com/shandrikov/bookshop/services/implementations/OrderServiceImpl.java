@@ -17,7 +17,7 @@ public class OrderServiceImpl implements OrderService {
     private final UserRepository userRepo;
 
     @Override
-    public Order createOrderFromBasket(User user) {
+    public Order createOrderFromShoppingCart(User user) {
 //        user.getBasket().getBooks... Add books from basket to order
 
         Order order = new Order();
