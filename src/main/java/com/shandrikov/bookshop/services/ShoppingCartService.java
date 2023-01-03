@@ -1,15 +1,14 @@
 package com.shandrikov.bookshop.services;
 
 import com.shandrikov.bookshop.domains.CartItem;
+import com.shandrikov.bookshop.domains.Order;
 import com.shandrikov.bookshop.domains.User;
 
 import java.util.List;
 
 public interface ShoppingCartService {
-
     int addBook(long bookId, int quantity, User user);
-
     void deleteItem(long bookId, User user);
-
     List<CartItem> getAll(User user);
+    Order createOrder(User user);
 }

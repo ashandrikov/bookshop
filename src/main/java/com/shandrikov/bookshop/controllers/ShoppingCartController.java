@@ -2,6 +2,7 @@ package com.shandrikov.bookshop.controllers;
 
 import com.shandrikov.bookshop.domains.CartItem;
 import com.shandrikov.bookshop.domains.User;
+import com.shandrikov.bookshop.domains.Order;
 import com.shandrikov.bookshop.services.ShoppingCartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -33,5 +34,10 @@ public class ShoppingCartController {
     @DeleteMapping("/cart/remove/{bookId}")
     public void removeBookFromCart (@PathVariable("bookId") int bookId, @AuthenticationPrincipal User user){
         shoppingCartService.deleteItem(bookId, user);
+    }
+
+    @PostMapping("/cart/order")
+    public Order createOrderFromCart (@AuthenticationPrincipal User user){
+        return shoppingCartService.createOrder(user);
     }
 }

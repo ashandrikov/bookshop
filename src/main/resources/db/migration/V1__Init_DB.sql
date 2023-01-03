@@ -13,17 +13,11 @@ CREATE TABLE books (
     PRIMARY KEY (id)
 );
 
-CREATE TABLE shoppingcarts (
-    id          BIGINT AUTO_INCREMENT NOT NULL,
-    PRIMARY KEY (id)
-);
-
 CREATE TABLE users (
     id              BIGINT AUTO_INCREMENT NOT NULL,
     login           varchar(255) UNIQUE,
     password        varchar(255),
     role            varchar(255),
-    shoppingcart_id bigint,
     account_non_locked bit,
     PRIMARY KEY (id)
 );
@@ -63,9 +57,6 @@ ALTER TABLE cart_items
 
 ALTER TABLE orders
     ADD CONSTRAINT FK_ORDERS_ON_USER FOREIGN KEY (user_id) REFERENCES users (id);
-
-ALTER TABLE users
-    ADD CONSTRAINT FK_USERS_ON_BASKET FOREIGN KEY (shoppingcart_id) REFERENCES shoppingcarts (id);
 
 ALTER TABLE orderdetails
     ADD CONSTRAINT FK_ORDERDETAILS_ON_BOOK FOREIGN KEY (book_id) REFERENCES books (id);

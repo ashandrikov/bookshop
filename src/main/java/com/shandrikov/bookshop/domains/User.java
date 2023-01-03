@@ -1,5 +1,6 @@
 package com.shandrikov.bookshop.domains;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.shandrikov.bookshop.DTOs.AuthenticationRequest;
 import com.shandrikov.bookshop.enums.Role;
 import jakarta.persistence.CascadeType;
@@ -13,11 +14,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -28,9 +28,9 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
-@ToString(exclude = "orders")
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,11 +42,9 @@ public class User implements UserDetails {
     private Role role;
     @Column(name = "account_non_locked")
     private boolean accountNonLocked;
-    @OneToOne(cascade = CascadeType.ALL, optional = false, orphanRemoval = true)
-    @JoinColumn(name = "shoppingcart_id")
-    private ShoppingCart shoppingCart;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private List<Order> orders;
 
     public User(AuthenticationRequest request) {
@@ -54,7 +52,6 @@ public class User implements UserDetails {
         this.password = request.getPassword();
         this.accountNonLocked = true;
         this.role = Role.USER;
-        this.shoppingCart = new ShoppingCart();
         this.orders = new ArrayList<>();
     }
 

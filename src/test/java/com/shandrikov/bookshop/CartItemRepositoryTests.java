@@ -31,12 +31,7 @@ class CartItemRepositoryTests {
 
     @BeforeEach
     void initEntity(){
-        user = getUser();
-        book = getBook();
-        entityManager.persist(user);
-        entityManager.persist(book);
-        cartItem = getCartItem(user, book, 1);
-        cartItemRepo.save(cartItem);
+        createAndSaveEntities();
     }
 
     @Test
@@ -88,6 +83,15 @@ class CartItemRepositoryTests {
         cartItem.setBook(book);
         cartItem.setQuantity(quantity);
         return cartItem;
+    }
+
+    private void createAndSaveEntities(){
+        user = getUser();
+        book = getBook();
+        entityManager.persist(user);
+        entityManager.persist(book);
+        cartItem = getCartItem(user, book, 1);
+        cartItemRepo.save(cartItem);
     }
 
 }

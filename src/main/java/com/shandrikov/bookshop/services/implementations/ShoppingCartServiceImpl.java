@@ -2,9 +2,12 @@ package com.shandrikov.bookshop.services.implementations;
 
 import com.shandrikov.bookshop.domains.Book;
 import com.shandrikov.bookshop.domains.CartItem;
+import com.shandrikov.bookshop.domains.Order;
+import com.shandrikov.bookshop.domains.OrderDetails;
 import com.shandrikov.bookshop.domains.User;
 import com.shandrikov.bookshop.repositories.BookRepository;
 import com.shandrikov.bookshop.repositories.CartItemRepository;
+import com.shandrikov.bookshop.repositories.OrderRepository;
 import com.shandrikov.bookshop.services.ShoppingCartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,8 +23,10 @@ import static com.shandrikov.bookshop.utils.StringPool.INVALID_QUANTITY;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ShoppingCartServiceImpl implements ShoppingCartService {
     private final CartItemRepository cartItemRepository;
+    private final OrderRepository orderRepository;
     private final BookRepository bookRepository;
 
     @Override
@@ -29,7 +34,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         return cartItemRepository.findByUser(user);
     }
 
-    @Transactional
+//    @Transactional
     @Override
     public int addBook(long bookId, int quantity, User user){
         Book book = bookRepository.findById(bookId)
@@ -56,12 +61,30 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         return updatedQuantity;
     }
 
-    @Transactional
+//    @Transactional
     @Override
     public void deleteItem(long bookId, User user){
         bookRepository.findById(bookId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, BOOK_NOT_FOUND));
         cartItemRepository.deleteByUserAndBook(user.getId(), bookId);
+    }
+
+//    @Transactional
+    @Override
+    public Order createOrder(User user){
+        Order order = new Order();
+        order.setUser(user);
+        List<CartItem> listCartItems = cartItemRepository.findByUser(user);
+        for (CartItem cartItem :listCartItems) {
+            OrderDetails orderDetails = new OrderDetails();
+            orderDetails.setOrder(order);
+            orderDetails.setBook(cartItem.getBook());
+            orderDetails.setQuantity(cartItem.getQuantity());
+            order.getOrderDetails().add(orderDetails);
+        }
+        user.getOrders().add(order);
+        cartItemRepository.deleteByUser(user);
+        return orderRepository.save(order);
     }
 
 }
