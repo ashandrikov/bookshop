@@ -34,7 +34,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         return cartItemRepository.findByUser(user);
     }
 
-//    @Transactional
     @Override
     public int addBook(long bookId, int quantity, User user){
         Book book = bookRepository.findById(bookId)
@@ -61,7 +60,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         return updatedQuantity;
     }
 
-//    @Transactional
     @Override
     public void deleteItem(long bookId, User user){
         bookRepository.findById(bookId)
@@ -69,11 +67,9 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         cartItemRepository.deleteByUserAndBook(user.getId(), bookId);
     }
 
-//    @Transactional
     @Override
     public Order createOrder(User user){
         Order order = new Order();
-        order.setUser(user);
         List<CartItem> listCartItems = cartItemRepository.findByUser(user);
         for (CartItem cartItem :listCartItems) {
             OrderDetails orderDetails = new OrderDetails();
@@ -82,7 +78,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             orderDetails.setQuantity(cartItem.getQuantity());
             order.getOrderDetails().add(orderDetails);
         }
-        user.getOrders().add(order);
+        user.addOrder(order);
         cartItemRepository.deleteByUser(user);
         return orderRepository.save(order);
     }

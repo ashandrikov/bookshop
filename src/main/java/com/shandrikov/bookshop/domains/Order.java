@@ -51,4 +51,13 @@ public class Order {
         this.status = OrderStatus.NEW;
         this.orderTime = LocalDateTime.now();
     }
+
+    @Column(name = "total_price")
+    public double getTotalPrice(){
+        double totalPrice = 0;
+        for (OrderDetails details :orderDetails) {
+            totalPrice += details.getTotalPrice();
+        }
+        return totalPrice * 1.05;
+    }
 }

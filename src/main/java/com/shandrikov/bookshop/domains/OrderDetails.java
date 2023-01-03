@@ -13,7 +13,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "orderdetails")
+@Table(name = "order_details")
 @Getter
 @Setter
 public class OrderDetails {
@@ -32,4 +32,9 @@ public class OrderDetails {
     @JoinColumn(name = "order_id")
     @JsonIgnore
     private Order order;
+
+    @Column(name = "total_price")
+    public double getTotalPrice(){
+        return book.getPrice() * quantity;
+    }
 }

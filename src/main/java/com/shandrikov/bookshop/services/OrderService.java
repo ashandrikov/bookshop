@@ -6,11 +6,8 @@ import com.shandrikov.bookshop.domains.User;
 import java.util.List;
 
 public interface OrderService {
-    Order createOrderFromShoppingCart(User user);
-
     List<Order> getAllOrders();
-
     void deleteAll();
-
+    void deleteOrder(Order order);
     List<Order> getAllOrdersForUser(User user);
 }

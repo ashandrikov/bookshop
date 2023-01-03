@@ -8,7 +8,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,16 +34,10 @@ public class OrderController {
         return orderService.getAllOrdersForUser(user);
     }
 
-    @PostMapping("/user/order")
-    public Order create(@AuthenticationPrincipal User user){
-        return orderService.createOrderFromShoppingCart(user);
+    @DeleteMapping("/order/{id}")
+    public void delete(@PathVariable("id") Order order){
+        orderService.deleteOrder(order);
     }
-
-//    @PutMapping("/book/{id}")
-//    public Book update(@PathVariable("id") Book bookFromDB, @Valid @RequestBody Book book){
-//        BeanUtils.copyProperties(book, bookFromDB, "id");
-//        return orderService.saveBook(bookFromDB);
-//    }
 
     @DeleteMapping("/orders")
     public void delete(){

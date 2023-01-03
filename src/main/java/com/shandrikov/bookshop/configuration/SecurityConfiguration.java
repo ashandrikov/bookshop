@@ -26,6 +26,7 @@ public class SecurityConfiguration {
                     .requestMatchers(HttpMethod.POST, "/restapi/auth/signup").permitAll()
                     .requestMatchers(HttpMethod.POST, "/restapi/book").hasAuthority(Role.EDITOR.toString())
                     .requestMatchers("/restapi/admin/**").hasAuthority(Role.ADMINISTRATOR.toString())
+                    .requestMatchers("/restapi/cart/**", "/restapi/user/**").hasAuthority(Role.USER.toString())
                         .anyRequest().authenticated()
                 .and()
                     .sessionManagement()

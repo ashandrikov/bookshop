@@ -90,4 +90,14 @@ public class User implements UserDetails {
         return true;
     }
 
+    public void addOrder(Order order) {
+        orders.add(order);
+        order.setUser(this);
+    }
+
+    public void removeOrder(Order order) {
+        orders.remove(order);
+        order.setUser(null);
+    }
+
 }
