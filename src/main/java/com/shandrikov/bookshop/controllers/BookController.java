@@ -1,7 +1,9 @@
 package com.shandrikov.bookshop.controllers;
 
+import com.shandrikov.bookshop.DTOs.BookDTO;
 import com.shandrikov.bookshop.domains.Book;
 import com.shandrikov.bookshop.services.BookService;
+import com.shandrikov.bookshop.utils.ObjectMapperUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -23,24 +25,24 @@ public class BookController {
     private final BookService bookService;
 
     @GetMapping("/books")
-    public List<Book> getAll(){
-        return bookService.getAllBooks();
+    public List<BookDTO> getAll(){
+        return ObjectMapperUtils.mapAll(bookService.getAllBooks(), BookDTO.class);
     }
 
     @GetMapping("/book/{id}")
-    public Book getOne(@PathVariable("id") Book book){
-        return book;
+    public BookDTO getOne(@PathVariable("id") Book book){
+        return ObjectMapperUtils.map(book, BookDTO.class);
     }
 
     @PostMapping("/book")
-    public Book create(@Valid @RequestBody Book book){
-        return bookService.saveBook(book);
+    public Book create(@Valid @RequestBody BookDTO book){
+        return bookService.saveBook(ObjectMapperUtils.map(book, Book.class));
     }
 
     @PutMapping("/book/{id}")
-    public Book update(@PathVariable("id") Book bookFromDB, @Valid @RequestBody Book book){
+    public Book update(@PathVariable("id") Book bookFromDB, @Valid @RequestBody BookDTO book){
         BeanUtils.copyProperties(book, bookFromDB, "id");
-        return bookService.saveBook(bookFromDB);
+        return bookService.saveBook(ObjectMapperUtils.map(bookFromDB, Book.class));
     }
 
     @DeleteMapping("/books")

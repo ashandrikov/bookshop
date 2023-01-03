@@ -11,20 +11,20 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
-    private final BookRepository bookRepo;
+    private final BookRepository bookRepository;
 
     @Override
     public Book saveBook(Book book){
-        return bookRepo.save(book);
+        return bookRepository.save(book);
     }
 
     @Override
     public List<Book> getAllBooks(){
-        return bookRepo.findAll();
+        return bookRepository.findAll();
     }
 
     @Override
     public void deleteAll() {
-        bookRepo.deleteAll();
+        bookRepository.deleteAll();
     }
 }

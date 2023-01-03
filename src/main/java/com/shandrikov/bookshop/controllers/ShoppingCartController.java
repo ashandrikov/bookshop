@@ -1,9 +1,10 @@
 package com.shandrikov.bookshop.controllers;
 
-import com.shandrikov.bookshop.domains.CartItem;
-import com.shandrikov.bookshop.domains.User;
+import com.shandrikov.bookshop.DTOs.CartItemDTO;
 import com.shandrikov.bookshop.domains.Order;
+import com.shandrikov.bookshop.domains.User;
 import com.shandrikov.bookshop.services.ShoppingCartService;
+import com.shandrikov.bookshop.utils.ObjectMapperUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,10 +23,11 @@ public class ShoppingCartController {
     private final ShoppingCartService shoppingCartService;
 
     @GetMapping("/cart")
-    public List<CartItem> getAllCartItems (@AuthenticationPrincipal User user){
-        return shoppingCartService.getAll(user);
-    }
+    public List<CartItemDTO> getAllCartItems (@AuthenticationPrincipal User user){
+        return ObjectMapperUtils.mapAll(shoppingCartService.getAll(user), CartItemDTO.class);
 
+    }
+    //TODO: stopped here create bew DTO layer (CartItem)
     @PostMapping("/cart/add/{bookId}/{quantity}")
     public int addBookToCart (@PathVariable("bookId") int bookId, @PathVariable("quantity") int quantity, @AuthenticationPrincipal User user){
         return shoppingCartService.addBook(bookId, quantity, user);
