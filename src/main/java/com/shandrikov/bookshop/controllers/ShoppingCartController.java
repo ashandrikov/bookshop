@@ -1,7 +1,7 @@
 package com.shandrikov.bookshop.controllers;
 
 import com.shandrikov.bookshop.DTOs.CartItemDTO;
-import com.shandrikov.bookshop.domains.Order;
+import com.shandrikov.bookshop.DTOs.OrderDTO;
 import com.shandrikov.bookshop.domains.User;
 import com.shandrikov.bookshop.services.ShoppingCartService;
 import com.shandrikov.bookshop.utils.ObjectMapperUtils;
@@ -25,9 +25,8 @@ public class ShoppingCartController {
     @GetMapping("/cart")
     public List<CartItemDTO> getAllCartItems (@AuthenticationPrincipal User user){
         return ObjectMapperUtils.mapAll(shoppingCartService.getAll(user), CartItemDTO.class);
-
     }
-    //TODO: stopped here create bew DTO layer (CartItem)
+
     @PostMapping("/cart/add/{bookId}/{quantity}")
     public int addBookToCart (@PathVariable("bookId") int bookId, @PathVariable("quantity") int quantity, @AuthenticationPrincipal User user){
         return shoppingCartService.addBook(bookId, quantity, user);
@@ -39,7 +38,7 @@ public class ShoppingCartController {
     }
 
     @PostMapping("/cart/order")
-    public Order createOrderFromCart (@AuthenticationPrincipal User user){
-        return shoppingCartService.createOrder(user);
+    public OrderDTO createOrderFromCart (@AuthenticationPrincipal User user){
+        return ObjectMapperUtils.map(shoppingCartService.createOrder(user), OrderDTO.class);
     }
 }

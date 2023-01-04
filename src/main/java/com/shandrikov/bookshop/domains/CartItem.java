@@ -27,9 +27,4 @@ public class CartItem {
     @JoinColumn(name = "book_id")
     private Book book;
     private int quantity;
-
-    @Column(name = "total_price")
-    public double getTotalPrice(){
-        return book.getPrice() * quantity;
-    }
 }

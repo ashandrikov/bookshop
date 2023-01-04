@@ -11,6 +11,7 @@ import com.shandrikov.bookshop.repositories.OrderRepository;
 import com.shandrikov.bookshop.services.ShoppingCartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -64,7 +65,10 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     public void deleteItem(long bookId, User user){
         bookRepository.findById(bookId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, BOOK_NOT_FOUND));
-        cartItemRepository.deleteByUserAndBook(user.getId(), bookId);
+
+        //Example: how to get user info in any point of the app. To clean code delete line below and change the parameter -> user.getId()
+        User auth = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        cartItemRepository.deleteByUserAndBook(auth.getId(), bookId);
     }
 
     @Override
@@ -78,9 +82,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             orderDetails.setQuantity(cartItem.getQuantity());
             order.getOrderDetails().add(orderDetails);
         }
-        user.addOrder(order);
+        order.setUser(user);
         cartItemRepository.deleteByUser(user);
         return orderRepository.save(order);
     }
-
 }

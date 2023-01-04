@@ -12,6 +12,8 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "order_details")
 @Getter
@@ -21,20 +23,15 @@ public class OrderDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-
     @ManyToOne
     @JoinColumn(name = "book_id")
     private Book book;
-
     private int quantity;
-
     @ManyToOne
     @JoinColumn(name = "order_id")
     @JsonIgnore
     private Order order;
-
-    @Column(name = "total_price")
-    public double getTotalPrice(){
-        return book.getPrice() * quantity;
+    public BigDecimal getTotalPrice(){
+        return book.getPrice().multiply(BigDecimal.valueOf(quantity));
     }
 }

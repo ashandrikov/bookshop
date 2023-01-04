@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 public class BookDTO {
@@ -20,7 +22,7 @@ public class BookDTO {
     private String title;
     @Min(value = 0, message = "Price can not be lower than 0.00")
     @Max(value = 250, message = "Price cannot be higher than 250.00")
-    private double price;
+    private BigDecimal price;
     @Min(value = 1900, message = "Year can not be less than 1900")
     @Max(value = 2024, message = "Year can not be bigger than 2024")
     private int year;

@@ -9,17 +9,17 @@ CREATE TABLE books (
     id          BIGINT AUTO_INCREMENT NOT NULL,
     author      varchar(25)           NOT NULL,
     title       varchar(25)           NOT NULL,
-    price       DOUBLE                NOT NULL,
+    price       decimal(10, 2)        NOT NULL,
     year        INT                   NOT NULL,
     PRIMARY KEY (id)
 );
 
 CREATE TABLE users (
-    id              BIGINT AUTO_INCREMENT NOT NULL,
-    login           varchar(255) UNIQUE,
-    password        varchar(255),
-    role            varchar(255),
-    account_non_locked bit,
+    id                  BIGINT AUTO_INCREMENT NOT NULL,
+    login               VARCHAR(255)          UNIQUE,
+    password            VARCHAR(255),
+    role                VARCHAR(255),
+    account_non_locked  BIT,
     PRIMARY KEY (id)
 );
 
@@ -28,8 +28,7 @@ CREATE TABLE orders
     id         BIGINT AUTO_INCREMENT NOT NULL,
     user_id    BIGINT                NULL,
     status     VARCHAR(255)          NULL,
-    order_time datetime              NULL,
-    total_price INT                  NULL,
+    order_time DATETIME              NULL,
     PRIMARY KEY (id)
 );
 
@@ -39,7 +38,6 @@ CREATE TABLE cart_items
     user_id  BIGINT                NULL,
     book_id  BIGINT                NULL,
     quantity INT                   NOT NULL,
-    total_price INT                NULL,
     PRIMARY KEY (id)
 );
 
@@ -49,7 +47,6 @@ CREATE TABLE order_details
     book_id  BIGINT                NULL,
     quantity INT                   NOT NULL,
     order_id BIGINT                NULL,
-    total_price INT                NULL,
     PRIMARY KEY (id)
 );
 

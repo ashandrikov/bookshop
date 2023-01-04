@@ -2,8 +2,10 @@ package com.shandrikov.bookshop.controllers;
 
 import com.shandrikov.bookshop.DTOs.AuthenticationRequest;
 import com.shandrikov.bookshop.DTOs.NewPasswordDTO;
+import com.shandrikov.bookshop.DTOs.UserDTO;
 import com.shandrikov.bookshop.domains.User;
 import com.shandrikov.bookshop.services.implementations.UserServiceImpl;
+import com.shandrikov.bookshop.utils.ObjectMapperUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -28,13 +30,13 @@ public class UserController {
     private final UserServiceImpl userService;
 
     @PostMapping("/auth/signup")
-    public User signup(@Valid @RequestBody AuthenticationRequest request){
-        return userService.saveUser(request);
+    public UserDTO signup(@Valid @RequestBody AuthenticationRequest request){
+        return ObjectMapperUtils.map(userService.saveUser(request), UserDTO.class);
     }
 
     @GetMapping("/admin/users")
-    public List<User> seeListUsers(){
-        return userService.findAll();
+    public List<UserDTO> seeListUsers(){
+        return ObjectMapperUtils.mapAll(userService.findAll(), UserDTO.class);
     }
 
     @PostMapping("/auth/changepass")

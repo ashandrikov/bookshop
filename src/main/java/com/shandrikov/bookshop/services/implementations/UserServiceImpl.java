@@ -3,6 +3,7 @@ package com.shandrikov.bookshop.services.implementations;
 import com.shandrikov.bookshop.DTOs.AuthenticationRequest;
 import com.shandrikov.bookshop.DTOs.NewPasswordDTO;
 import com.shandrikov.bookshop.domains.User;
+import com.shandrikov.bookshop.repositories.OrderRepository;
 import com.shandrikov.bookshop.repositories.UserRepository;
 import com.shandrikov.bookshop.services.UserService;
 import org.slf4j.Logger;
@@ -16,10 +17,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.shandrikov.bookshop.enums.Role.ADMINISTRATOR;
 import static com.shandrikov.bookshop.enums.Role.EDITOR;
@@ -35,14 +36,15 @@ import static com.shandrikov.bookshop.utils.StringPool.USER_NOT_FOUND;
 public class UserServiceImpl implements UserDetailsService, UserService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
     private final UserRepository userRepository;
-
+    private final OrderRepository orderRepository;
     private final PasswordEncoder encoder;
 
     //     The purpose of this Lazy initialization of PasswordEncoder Bean is to avoid Bean Loop problem
     @Autowired
-    public UserServiceImpl(@Lazy PasswordEncoder encoder, UserRepository userRepository) {
+    public UserServiceImpl(@Lazy PasswordEncoder encoder, UserRepository userRepository, OrderRepository orderRepository) {
         this.encoder = encoder;
         this.userRepository = userRepository;
+        this.orderRepository = orderRepository;
     }
 
     @Override
@@ -81,17 +83,18 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         return userRepository.findAll();
     }
 
+    @Transactional
     @Override
     public void deleteUser(String login) {
-        Optional<User> userByEmail = userRepository.findByLoginIgnoreCase(login);
-        if (userByEmail.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, USER_NOT_FOUND);
-        } else if (userByEmail.get().getAuthorities().contains(ADMINISTRATOR)) {
+        User userByEmail = userRepository.findByLoginIgnoreCase(login)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, USER_NOT_FOUND));
+        if (userByEmail.getAuthorities().contains(ADMINISTRATOR)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, CANNOT_TOGGLE_ADMINISTRATOR);
         }
 
         LOGGER.info(String.format("User '%s' was deleted", login));
-        userRepository.delete(userByEmail.get());
+        orderRepository.deleteByUser(userByEmail);
+        userRepository.delete(userByEmail);
     }
 
     @Override

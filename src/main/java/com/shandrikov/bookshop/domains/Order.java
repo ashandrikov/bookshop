@@ -1,6 +1,5 @@
 package com.shandrikov.bookshop.domains;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.shandrikov.bookshop.enums.OrderStatus;
 import jakarta.persistence.CascadeType;
@@ -32,32 +31,19 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id")
     @JsonIgnore
     private User user;
-
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+//    Example: One-to-Many BI relationship. It's highly recommended to avoid coding this way. For example only
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<OrderDetails> orderDetails = new HashSet<>();
-
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
-
-    @JsonFormat(pattern="dd.MM.yyyy 'at' HH:mm:ss")
     private LocalDateTime orderTime;
 
     public Order() {
         this.status = OrderStatus.NEW;
         this.orderTime = LocalDateTime.now();
-    }
-
-    @Column(name = "total_price")
-    public double getTotalPrice(){
-        double totalPrice = 0;
-        for (OrderDetails details :orderDetails) {
-            totalPrice += details.getTotalPrice();
-        }
-        return totalPrice * 1.05;
     }
 }
