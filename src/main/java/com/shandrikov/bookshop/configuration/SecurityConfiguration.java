@@ -27,7 +27,7 @@ public class SecurityConfiguration {
                     .requestMatchers(HttpMethod.POST, "/restapi/book").hasAuthority(Role.EDITOR.toString())
                     .requestMatchers("/restapi/admin/**").hasAuthority(Role.ADMINISTRATOR.toString())
                     .requestMatchers("/restapi/cart/**", "/restapi/user/**").hasAuthority(Role.USER.toString())
-                        .anyRequest().authenticated()
+                    .anyRequest().permitAll()
                 .and()
                     .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

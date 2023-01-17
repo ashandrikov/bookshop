@@ -1,11 +1,15 @@
 package com.shandrikov.bookshop.exceptions;
 
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,7 +27,12 @@ public class MyExceptionHandler {
         return ResponseEntity.badRequest().body(errors);
     }
 
-//    // The same as previous method but catchs bean validation exceptions on service layer
+    @ExceptionHandler(MissingPathVariableException.class)
+    public void handleInvalidPath(HttpServletResponse response) throws IOException {
+        response.sendError(HttpStatus.NOT_FOUND.value(), "Required path variable 'id' is not present.");
+    }
+
+//    Example: The same as previous method but catches bean validation exceptions on service layer
 //    @ExceptionHandler(ConstraintViolationException.class)
 //    public void handleConstraintViolationException(ConstraintViolationException ex, HttpServletResponse response)
 //            throws IOException {

@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -55,13 +54,11 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Override
     public User saveUser(AuthenticationRequest request) {
+        if (userRepository.findByLoginIgnoreCase(request.getLogin()).isPresent())
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, USER_EXISTS);
         User user = new User(request);
         user.setPassword(encoder.encode(user.getPassword()));
-        try {
-            userRepository.save(user);
-        } catch (DataIntegrityViolationException ex) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, USER_EXISTS);
-        }
+        userRepository.save(user);
         LOGGER.info(String.format(USER_CREATED, user.getLogin()));
         return user;
     }
