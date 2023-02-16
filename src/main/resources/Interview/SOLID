@@ -1,0 +1,28 @@
+SOLID - object oriented design principles (uncle Bob)
+
+S - single responsibility
+
+    Each class should have only one sole purpose,
+    and not be filled with excessive functionality
+
+O - open / close
+
+    Class should be open for extension,
+    closed to modification
+
+    In other words, you should not have to rewrite an existing class
+    for implementing new functionality
+        (use interface instead, example with area() method with diff shapes example)
+
+L - Liskov substitution
+
+    Every subclass should be substitutable for their base or parent class
+    (example: NoShape impl Shape)
+
+I - interface segregation
+
+    Large interfaces should be divide into small ones
+
+D - dependency inversion
+
+    Components should depend on abstractions, not on concretions

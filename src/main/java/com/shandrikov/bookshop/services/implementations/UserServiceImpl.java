@@ -2,6 +2,8 @@ package com.shandrikov.bookshop.services.implementations;
 
 import com.shandrikov.bookshop.DTOs.AuthenticationRequest;
 import com.shandrikov.bookshop.DTOs.NewPasswordDTO;
+import com.shandrikov.bookshop.configuration.JwtService;
+import com.shandrikov.bookshop.controllers.AuthenticationResponse;
 import com.shandrikov.bookshop.domains.User;
 import com.shandrikov.bookshop.repositories.OrderRepository;
 import com.shandrikov.bookshop.repositories.UserRepository;
@@ -11,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -37,13 +41,17 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
     private final PasswordEncoder encoder;
+    private final JwtService jwtService;
+    private final AuthenticationManager authManager;
 
     //     The purpose of this Lazy initialization of PasswordEncoder Bean is to avoid Bean Loop problem
     @Autowired
-    public UserServiceImpl(@Lazy PasswordEncoder encoder, UserRepository userRepository, OrderRepository orderRepository) {
+    public UserServiceImpl(@Lazy PasswordEncoder encoder, UserRepository userRepository, OrderRepository orderRepository, JwtService jwtService, @Lazy AuthenticationManager authManager) {
         this.encoder = encoder;
         this.userRepository = userRepository;
         this.orderRepository = orderRepository;
+        this.jwtService = jwtService;
+        this.authManager = authManager;
     }
 
     @Override
@@ -53,14 +61,33 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public User saveUser(AuthenticationRequest request) {
-        if (userRepository.findByLoginIgnoreCase(request.getLogin()).isPresent())
+    public AuthenticationResponse register(AuthenticationRequest request) {
+        if (userRepository.findByLoginIgnoreCase(request.login()).isPresent())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, USER_EXISTS);
         User user = new User(request);
         user.setPassword(encoder.encode(user.getPassword()));
         userRepository.save(user);
+        var jwtToken = jwtService.generateToken(user);
         LOGGER.info(String.format(USER_CREATED, user.getLogin()));
-        return user;
+        return AuthenticationResponse.builder()
+                .token(jwtToken)
+                .build();
+    }
+
+    @Override
+    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+        authManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.login(),
+                        request.password()
+                )
+        );
+        var user = userRepository.findByLoginIgnoreCase(request.login())
+                .orElseThrow();
+        var jwtToken = jwtService.generateToken(user);
+        return AuthenticationResponse.builder()
+                .token(jwtToken)
+                .build();
     }
 
     @Override

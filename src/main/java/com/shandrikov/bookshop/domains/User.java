@@ -28,7 +28,6 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(unique = true)
     private String login;
     private String password;
     @Enumerated(EnumType.STRING)
@@ -37,8 +36,8 @@ public class User implements UserDetails {
     private boolean accountNonLocked;
 
     public User(AuthenticationRequest request) {
-        this.login = request.getLogin();
-        this.password = request.getPassword();
+        this.login = request.login();
+        this.password = request.password();
         this.accountNonLocked = true;
         this.role = Role.USER;
     }

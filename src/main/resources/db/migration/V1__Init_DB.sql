@@ -16,7 +16,7 @@ CREATE TABLE books (
 
 CREATE TABLE users (
     id                  BIGINT AUTO_INCREMENT NOT NULL,
-    login               VARCHAR(255)          UNIQUE,
+    login               VARCHAR(255),
     password            VARCHAR(255),
     role                VARCHAR(255),
     account_non_locked  BIT,

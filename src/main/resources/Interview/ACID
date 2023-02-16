@@ -1,0 +1,17 @@
+Four key properties of a transaction
+
+A - atomicity
+
+    Entire transaction takes place at once or doesn't happen at all
+
+C - consistency
+
+    The DB must be consistent before and after transaction
+
+I - isolation
+
+    Multiple Transactions occur independently without interference
+
+D - durability
+
+    The changes of a successful Transaction save even if system failure occurs
