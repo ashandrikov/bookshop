@@ -31,7 +31,7 @@ import static com.shandrikov.bookshop.utils.StringPool.USER_NOT_FOUND;
 @Service
 //@RequiredArgsConstructor
 public class UserServiceImpl implements UserDetailsService, UserService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
+    private final Logger log = LoggerFactory.getLogger(getClass());
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
     private final PasswordEncoder encoder;
@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
             user.setPassword(encoder.encode(newPassword));
             userRepository.save(user);
         }
-        LOGGER.info(String.format(PASSWORD_UPDATED_USER, user.getUsername()));
+        log.info(String.format(PASSWORD_UPDATED_USER, user.getUsername()));
     }
 
     @Override
@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, CANNOT_TOGGLE_ADMINISTRATOR);
         }
 
-        LOGGER.info(String.format("User '%s' was deleted", login));
+        log.info(String.format("User '%s' was deleted", login));
         orderRepository.deleteByUser(userByEmail);
         userRepository.delete(userByEmail);
     }
@@ -91,7 +91,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
             case ADMINISTRATOR ->
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, CANNOT_TOGGLE_ADMINISTRATOR);
         }
-        LOGGER.info(String.format("Role for account '%s' was changed", login));
+        log.info(String.format("Role for account '%s' was changed", login));
         return userRepository.save(userByLogin);
     }
 
@@ -106,7 +106,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         boolean locked = userByLogin.isAccountNonLocked();
         userByLogin.setAccountNonLocked(!locked);
 
-        LOGGER.info(String.format("Account '%s' was LOCKED / UNLOCKED", login));
+        log.info(String.format("Account '%s' was LOCKED / UNLOCKED", login));
         return userRepository.save(userByLogin);
     }
 }

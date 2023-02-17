@@ -1,8 +1,10 @@
 package com.shandrikov.bookshop.exceptions;
 
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingPathVariableException;
@@ -13,8 +15,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.shandrikov.bookshop.utils.StringPool.MISS_PATH_VARIABLE;
+
 @ControllerAdvice
 public class MyExceptionHandler {
+
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(
             MethodArgumentNotValidException ex) {
@@ -29,7 +35,17 @@ public class MyExceptionHandler {
 
     @ExceptionHandler(MissingPathVariableException.class)
     public void handleInvalidPath(HttpServletResponse response) throws IOException {
-        response.sendError(HttpStatus.NOT_FOUND.value(), "Required path variable 'id' is not present.");
+        response.sendError(HttpStatus.NOT_FOUND.value(), MISS_PATH_VARIABLE);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<Map<String, String>> handleInvalidAuth(BadCredentialsException ex){
+        return ResponseEntity.status(401).body(Map.of("error", ex.getMessage()));
+    }
+
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<Map<String, String>> handleInvalidJwt(JwtException ex){
+        return ResponseEntity.status(401).body(Map.of("error", ex.getMessage()));
     }
 
 //    Example: The same as previous method but catches bean validation exceptions on service layer

@@ -11,18 +11,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import static com.shandrikov.bookshop.utils.StringPool.AUTH_INVALID;
+import static com.shandrikov.bookshop.utils.StringPool.USER_AUTHENTICATED;
 import static com.shandrikov.bookshop.utils.StringPool.USER_CREATED;
 import static com.shandrikov.bookshop.utils.StringPool.USER_EXISTS;
 
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AuthServiceImpl.class);
+    private final Logger log = LoggerFactory.getLogger(getClass());
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
     private final JwtService jwtService;
@@ -35,21 +39,26 @@ public class AuthServiceImpl implements AuthService {
         user.setPassword(encoder.encode(user.getPassword()));
         userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
-        LOGGER.info(String.format(USER_CREATED, user.getLogin()));
+        log.info(String.format(USER_CREATED, user.getLogin()));
         return new AuthenticationResponse(jwtToken);
     }
 
     @Override
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        authManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.login(),
-                        request.password()
-                )
-        );
+        try {
+            authManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.login(),
+                            request.password()
+                    )
+            );
+        } catch (AuthenticationException e) {
+            throw new BadCredentialsException(AUTH_INVALID);
+        }
         var user = userRepository.findByLoginIgnoreCase(request.login())
                 .orElseThrow();
         var jwtToken = jwtService.generateToken(user);
+        log.info(String.format(USER_AUTHENTICATED, user.getLogin()));
         return new AuthenticationResponse(jwtToken);
     }
 }
