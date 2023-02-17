@@ -1,9 +1,6 @@
 package com.shandrikov.bookshop.services.implementations;
 
-import com.shandrikov.bookshop.DTOs.AuthenticationRequest;
 import com.shandrikov.bookshop.DTOs.NewPasswordDTO;
-import com.shandrikov.bookshop.configuration.JwtService;
-import com.shandrikov.bookshop.controllers.AuthenticationResponse;
 import com.shandrikov.bookshop.domains.User;
 import com.shandrikov.bookshop.repositories.OrderRepository;
 import com.shandrikov.bookshop.repositories.UserRepository;
@@ -13,8 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -31,63 +26,28 @@ import static com.shandrikov.bookshop.enums.Role.USER;
 import static com.shandrikov.bookshop.utils.StringPool.CANNOT_TOGGLE_ADMINISTRATOR;
 import static com.shandrikov.bookshop.utils.StringPool.PASSWORDS_EQUAL;
 import static com.shandrikov.bookshop.utils.StringPool.PASSWORD_UPDATED_USER;
-import static com.shandrikov.bookshop.utils.StringPool.USER_CREATED;
-import static com.shandrikov.bookshop.utils.StringPool.USER_EXISTS;
 import static com.shandrikov.bookshop.utils.StringPool.USER_NOT_FOUND;
 
 @Service
+//@RequiredArgsConstructor
 public class UserServiceImpl implements UserDetailsService, UserService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
     private final PasswordEncoder encoder;
-    private final JwtService jwtService;
-    private final AuthenticationManager authManager;
 
-    //     The purpose of this Lazy initialization of PasswordEncoder Bean is to avoid Bean Loop problem
+//         The purpose of this Lazy initialization of PasswordEncoder Bean is to avoid Bean Loop problem
     @Autowired
-    public UserServiceImpl(@Lazy PasswordEncoder encoder, UserRepository userRepository, OrderRepository orderRepository, JwtService jwtService, @Lazy AuthenticationManager authManager) {
+    public UserServiceImpl(@Lazy PasswordEncoder encoder, UserRepository userRepository, OrderRepository orderRepository) {
         this.encoder = encoder;
         this.userRepository = userRepository;
         this.orderRepository = orderRepository;
-        this.jwtService = jwtService;
-        this.authManager = authManager;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByLoginIgnoreCase(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Not found: " + username));
-    }
-
-    @Override
-    public AuthenticationResponse register(AuthenticationRequest request) {
-        if (userRepository.findByLoginIgnoreCase(request.login()).isPresent())
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, USER_EXISTS);
-        User user = new User(request);
-        user.setPassword(encoder.encode(user.getPassword()));
-        userRepository.save(user);
-        var jwtToken = jwtService.generateToken(user);
-        LOGGER.info(String.format(USER_CREATED, user.getLogin()));
-        return AuthenticationResponse.builder()
-                .token(jwtToken)
-                .build();
-    }
-
-    @Override
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        authManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.login(),
-                        request.password()
-                )
-        );
-        var user = userRepository.findByLoginIgnoreCase(request.login())
-                .orElseThrow();
-        var jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder()
-                .token(jwtToken)
-                .build();
     }
 
     @Override

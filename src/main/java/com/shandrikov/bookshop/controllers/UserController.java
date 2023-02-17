@@ -1,6 +1,5 @@
 package com.shandrikov.bookshop.controllers;
 
-import com.shandrikov.bookshop.DTOs.AuthenticationRequest;
 import com.shandrikov.bookshop.DTOs.NewPasswordDTO;
 import com.shandrikov.bookshop.DTOs.UserDTO;
 import com.shandrikov.bookshop.domains.User;
@@ -8,7 +7,6 @@ import com.shandrikov.bookshop.services.UserService;
 import com.shandrikov.bookshop.utils.ObjectMapperUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,27 +27,6 @@ import static com.shandrikov.bookshop.utils.StringPool.PASSWORD_UPDATED;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-//    private final AuthenticationServiceImpl authService;
-
-//    @PostMapping("/auth/register")
-//    public ResponseEntity<AuthenticationResponse> register(
-//            @RequestBody RegisterRequest request
-//    ) {
-//        return ResponseEntity.ok(userService.register(request));
-//    }
-
-    @PostMapping("/auth/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate(
-            @RequestBody AuthenticationRequest request
-    ) {
-        return ResponseEntity.ok(userService.authenticate(request));
-    }
-
-    @PostMapping("/auth/signup")
-    public ResponseEntity<AuthenticationResponse> register(@Valid @RequestBody AuthenticationRequest request){
-//        return ObjectMapperUtils.map(userService.register(request), UserDTO.class);
-        return ResponseEntity.ok(userService.register(request));
-    }
 
     @GetMapping("/admin/users")
     public List<UserDTO> seeListUsers() {
