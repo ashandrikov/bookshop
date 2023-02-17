@@ -25,7 +25,6 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .addFilterBefore(filterChainExceptionHandler, LogoutFilter.class)
                 .authorizeHttpRequests()
                     .requestMatchers(HttpMethod.POST, "/restapi/auth/**").permitAll()
                     .requestMatchers(HttpMethod.POST, "/restapi/book").hasAuthority(Role.EDITOR.toString())
@@ -40,7 +39,8 @@ public class SecurityConfiguration {
                 .and()
                     .csrf().disable()
                     .authenticationProvider(authenticationProvider)
-                    .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(filterChainExceptionHandler, LogoutFilter.class)
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }

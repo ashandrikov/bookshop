@@ -5,8 +5,7 @@ import com.shandrikov.bookshop.domains.User;
 import com.shandrikov.bookshop.repositories.OrderRepository;
 import com.shandrikov.bookshop.repositories.UserRepository;
 import com.shandrikov.bookshop.services.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
@@ -29,9 +28,8 @@ import static com.shandrikov.bookshop.utils.StringPool.PASSWORD_UPDATED_USER;
 import static com.shandrikov.bookshop.utils.StringPool.USER_NOT_FOUND;
 
 @Service
-//@RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserDetailsService, UserService {
-    private final Logger log = LoggerFactory.getLogger(getClass());
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
     private final PasswordEncoder encoder;

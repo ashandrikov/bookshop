@@ -7,8 +7,7 @@ import com.shandrikov.bookshop.domains.User;
 import com.shandrikov.bookshop.repositories.UserRepository;
 import com.shandrikov.bookshop.services.AuthService;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -24,9 +23,9 @@ import static com.shandrikov.bookshop.utils.StringPool.USER_CREATED;
 import static com.shandrikov.bookshop.utils.StringPool.USER_EXISTS;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
-    private final Logger log = LoggerFactory.getLogger(getClass());
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
     private final JwtService jwtService;
