@@ -48,6 +48,11 @@ public class MyExceptionHandler {
         return ResponseEntity.status(401).body(Map.of("error", ex.getMessage()));
     }
 
+    @ExceptionHandler(UserExistException.class)
+    public ResponseEntity<Map<String, String>> handleUserExists(UserExistException ex){
+        return ResponseEntity.status(400).body(Map.of("error", ex.getMessage()));
+    }
+
 //    Example: The same as previous method but catches bean validation exceptions on service layer
 //    @ExceptionHandler(ConstraintViolationException.class)
 //    public void handleConstraintViolationException(ConstraintViolationException ex, HttpServletResponse response)
