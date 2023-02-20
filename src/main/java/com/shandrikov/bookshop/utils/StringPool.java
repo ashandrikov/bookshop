@@ -14,4 +14,5 @@ public class StringPool {
     public static final String JWT_INVALID = "JWT token is expired or invalid";
     public static final String AUTH_INVALID = "Invalid login or password";
     public static final String MISS_PATH_VARIABLE = "Required path variable 'id' is not present.";
+    public static final String ERROR_WHILE_MAPPING = "Error while mapping into String";
 }

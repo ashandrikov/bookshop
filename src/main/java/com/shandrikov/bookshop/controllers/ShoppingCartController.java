@@ -38,7 +38,7 @@ public class ShoppingCartController {
     }
 
     @PostMapping("/cart/order")
-    public OrderDTO createOrderFromCart (@AuthenticationPrincipal User user){
-        return ObjectMapperUtils.map(shoppingCartService.createOrder(user), OrderDTO.class);
+    public OrderDTO createOrderFromCart (@AuthenticationPrincipal User user) {
+        return shoppingCartService.createOrder(user);
     }
 }

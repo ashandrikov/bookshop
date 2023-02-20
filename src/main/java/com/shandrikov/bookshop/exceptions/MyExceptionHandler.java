@@ -21,6 +21,8 @@ import static com.shandrikov.bookshop.utils.StringPool.MISS_PATH_VARIABLE;
 public class MyExceptionHandler {
 
 
+    public static final String ERROR = "error";
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(
             MethodArgumentNotValidException ex) {
@@ -40,17 +42,22 @@ public class MyExceptionHandler {
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<Map<String, String>> handleInvalidAuth(BadCredentialsException ex){
-        return ResponseEntity.status(401).body(Map.of("error", ex.getMessage()));
+        return ResponseEntity.status(401).body(Map.of(ERROR, ex.getMessage()));
     }
 
     @ExceptionHandler(JwtException.class)
     public ResponseEntity<Map<String, String>> handleInvalidJwt(JwtException ex){
-        return ResponseEntity.status(401).body(Map.of("error", ex.getMessage()));
+        return ResponseEntity.status(401).body(Map.of(ERROR, ex.getMessage()));
     }
 
     @ExceptionHandler(UserExistException.class)
     public ResponseEntity<Map<String, String>> handleUserExists(UserExistException ex){
-        return ResponseEntity.status(400).body(Map.of("error", ex.getMessage()));
+        return ResponseEntity.status(400).body(Map.of(ERROR, ex.getMessage()));
+    }
+
+    @ExceptionHandler(MappingException.class)
+    public ResponseEntity<Map<String, String>> handleMappingException(MappingException ex){
+        return ResponseEntity.status(400).body(Map.of(ERROR, ex.getMessage()));
     }
 
 //    Example: The same as previous method but catches bean validation exceptions on service layer

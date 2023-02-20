@@ -1,5 +1,6 @@
 package com.shandrikov.bookshop.configuration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shandrikov.bookshop.services.implementations.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -32,5 +33,10 @@ public class ApplicationConfiguration {
     @Bean
     public PasswordEncoder getEncoder() {
         return new BCryptPasswordEncoder(12);
+    }
+
+    @Bean
+    public ObjectMapper getObjectMapper() {
+        return new ObjectMapper();
     }
 }

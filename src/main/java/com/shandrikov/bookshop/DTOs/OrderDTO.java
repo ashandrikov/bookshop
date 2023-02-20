@@ -1,6 +1,8 @@
 package com.shandrikov.bookshop.DTOs;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.shandrikov.bookshop.domains.OrderDetails;
 import com.shandrikov.bookshop.enums.OrderStatus;
 import lombok.Getter;
@@ -17,6 +19,7 @@ public class OrderDTO {
     private Set<OrderDetails> orderDetails;
     private OrderStatus status;
     @JsonFormat(pattern="dd.MM.yyyy 'at' HH:mm:ss")
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime orderTime;
     public BigDecimal getTotalOrderPrice(){
         BigDecimal totalPrice = BigDecimal.ZERO;
