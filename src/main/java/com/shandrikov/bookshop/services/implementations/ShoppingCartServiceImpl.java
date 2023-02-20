@@ -1,6 +1,5 @@
 package com.shandrikov.bookshop.services.implementations;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shandrikov.bookshop.DTOs.OrderDTO;
 import com.shandrikov.bookshop.domains.Book;
@@ -8,7 +7,6 @@ import com.shandrikov.bookshop.domains.CartItem;
 import com.shandrikov.bookshop.domains.Order;
 import com.shandrikov.bookshop.domains.OrderDetails;
 import com.shandrikov.bookshop.domains.User;
-import com.shandrikov.bookshop.exceptions.MappingException;
 import com.shandrikov.bookshop.repositories.BookRepository;
 import com.shandrikov.bookshop.repositories.CartItemRepository;
 import com.shandrikov.bookshop.repositories.OrderRepository;
@@ -28,7 +26,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.shandrikov.bookshop.utils.StringPool.BOOK_NOT_FOUND;
-import static com.shandrikov.bookshop.utils.StringPool.ERROR_WHILE_MAPPING;
 import static com.shandrikov.bookshop.utils.StringPool.INVALID_QUANTITY;
 
 @Service
@@ -102,13 +99,18 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         Order savedOrder = orderRepository.save(order);
         OrderDTO orderDTO = ObjectMapperUtils.map(savedOrder, OrderDTO.class);
 
-        try {
-            String orderString = mapper.writeValueAsString(orderDTO);
-            kafkaTemplate.send(orderTopic, savedOrder.getId().toString(), orderString);
-        } catch (JsonProcessingException e) {
-            log.error(ERROR_WHILE_MAPPING);
-            throw new MappingException(e.getMessage());
-        }
+//        To turn on kafka start zookeeper with this commands throw command line and uncomment try-catch block
+//        below and creating topic in kafkaConfig
+//        $ bin/zookeeper-server-start.sh config/zookeeper.properties
+//        $ bin/kafka-server-start.sh config/server.properties
+//
+//        try {
+//            String orderString = mapper.writeValueAsString(orderDTO);
+//            kafkaTemplate.send(orderTopic, savedOrder.getId().toString(), orderString);
+//        } catch (JsonProcessingException e) {
+//            log.error(ERROR_WHILE_MAPPING);
+//            throw new MappingException(e.getMessage());
+//        }
 
         return orderDTO;
     }

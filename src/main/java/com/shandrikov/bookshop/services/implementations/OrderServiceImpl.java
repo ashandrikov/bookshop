@@ -1,9 +1,11 @@
 package com.shandrikov.bookshop.services.implementations;
 
+import com.shandrikov.bookshop.DTOs.OrderDTO;
 import com.shandrikov.bookshop.domains.Order;
 import com.shandrikov.bookshop.domains.User;
 import com.shandrikov.bookshop.repositories.OrderRepository;
 import com.shandrikov.bookshop.services.OrderService;
+import com.shandrikov.bookshop.utils.ObjectMapperUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,8 +22,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> getAllOrdersForUser(User user) {
-        return orderRepository.findByUser(user);
+    public List<OrderDTO> getAllOrdersForUser(User user) {
+        return ObjectMapperUtils.mapAll(orderRepository.findByUser(user), OrderDTO.class);
     }
 
     @Override
