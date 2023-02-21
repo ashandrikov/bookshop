@@ -109,7 +109,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 //            kafkaTemplate.send(orderTopic, savedOrder.getId().toString(), orderString);
 //        } catch (JsonProcessingException e) {
 //            log.error(ERROR_WHILE_MAPPING);
-//            throw new MappingException(e.getMessage());
+//            throw new RuntimeException(e.getMessage());
 //        }
 
         return orderDTO;

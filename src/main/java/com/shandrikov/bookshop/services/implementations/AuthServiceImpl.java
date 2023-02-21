@@ -13,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -46,18 +47,14 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         try {
-            authManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            request.login(),
-                            request.password()
-                    )
-            );
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(request.login(), request.password());
+            authManager.authenticate(authentication);
         } catch (AuthenticationException e) {
             log.error(AUTH_INVALID);
             throw new BadCredentialsException(AUTH_INVALID);
         }
         var user = userRepository.findByLoginIgnoreCase(request.login())
-                .orElseThrow();
+                .orElseThrow(() -> new UsernameNotFoundException("Not found: " + request.login()));
         var jwtToken = jwtService.generateToken(user);
         log.info(String.format(USER_AUTHENTICATED, user.getLogin()));
         return new AuthenticationResponse(jwtToken);

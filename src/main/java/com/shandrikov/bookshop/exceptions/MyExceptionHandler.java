@@ -55,11 +55,6 @@ public class MyExceptionHandler {
         return ResponseEntity.status(400).body(Map.of(ERROR, ex.getMessage()));
     }
 
-    @ExceptionHandler(MappingException.class)
-    public ResponseEntity<Map<String, String>> handleMappingException(MappingException ex){
-        return ResponseEntity.status(400).body(Map.of(ERROR, ex.getMessage()));
-    }
-
 //    Example: The same as previous method but catches bean validation exceptions on service layer
 //    @ExceptionHandler(ConstraintViolationException.class)
 //    public void handleConstraintViolationException(ConstraintViolationException ex, HttpServletResponse response)
