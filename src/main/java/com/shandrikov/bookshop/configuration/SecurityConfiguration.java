@@ -9,10 +9,12 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import java.util.concurrent.TimeUnit;
 
 @Configuration
 @EnableWebSecurity
@@ -25,6 +27,7 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .csrf().disable()
                 .authorizeHttpRequests()
                     .requestMatchers(HttpMethod.POST, "/restapi/auth/**").permitAll()
                     .requestMatchers(HttpMethod.POST, "/restapi/book").hasAuthority(Role.EDITOR.toString())
@@ -32,15 +35,24 @@ public class SecurityConfiguration {
                     .requestMatchers("/restapi/cart/**", "/restapi/user/**").hasAuthority(Role.USER.toString())
                     .anyRequest().authenticated()
                 .and()
-                    .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    .formLogin()
+                    .loginPage("/login").permitAll()
+                    .defaultSuccessUrl("/api/books", true)
                 .and()
-                    .httpBasic()
+                    .rememberMe().tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(21))
+                    .key("R24FfUSP7Y6c1#a")
                 .and()
-                    .csrf().disable()
+                    .logout()
+                    .logoutUrl("/logout")
+                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
+                    .clearAuthentication(true)
+                    .invalidateHttpSession(true)
+                    .deleteCookies("JSESSIONID", "remember-me")
+                    .logoutSuccessUrl("/login")
+                .and()
                     .authenticationProvider(authenticationProvider)
-                .addFilterBefore(filterChainExceptionHandler, LogoutFilter.class)
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                    .addFilterBefore(filterChainExceptionHandler, LogoutFilter.class)
+                    .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }
