@@ -1,5 +1,6 @@
 package com.shandrikov.bookshop.services.implementations;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shandrikov.bookshop.DTOs.OrderDTO;
 import com.shandrikov.bookshop.domains.Book;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.shandrikov.bookshop.utils.StringPool.BOOK_NOT_FOUND;
+import static com.shandrikov.bookshop.utils.StringPool.ERROR_WHILE_MAPPING;
 import static com.shandrikov.bookshop.utils.StringPool.INVALID_QUANTITY;
 
 @Service
@@ -35,6 +37,8 @@ import static com.shandrikov.bookshop.utils.StringPool.INVALID_QUANTITY;
 public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Value("${main.topic}")
     private String orderTopic;
+    @Value("${kafka.enable}")
+    private boolean kafkaEnabled;
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final CartItemRepository cartItemRepository;
     private final OrderRepository orderRepository;
@@ -47,13 +51,13 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
-    public int addBook(long bookId, int quantity, User user){
+    public int addBook(long bookId, int quantity, User user) {
         Book book = bookRepository.findById(bookId)
-                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, BOOK_NOT_FOUND));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, BOOK_NOT_FOUND));
         int updatedQuantity = quantity;
         CartItem cartItem;
         Optional<CartItem> cartItemOpt = cartItemRepository.findByUserAndBook(user, book);
-        if (cartItemOpt.isPresent()){
+        if (cartItemOpt.isPresent()) {
             cartItem = cartItemOpt.get();
             updatedQuantity += cartItem.getQuantity();
         } else {
@@ -73,7 +77,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
-    public void deleteItem(long bookId, User user){
+    public void deleteItem(long bookId, User user) {
         bookRepository.findById(bookId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, BOOK_NOT_FOUND));
 
@@ -86,7 +90,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     public OrderDTO createOrder(User user) {
         Order order = new Order();
         List<CartItem> listCartItems = cartItemRepository.findByUser(user);
-        for (CartItem cartItem :listCartItems) {
+        for (CartItem cartItem : listCartItems) {
             OrderDetails orderDetails = new OrderDetails();
             orderDetails.setOrder(order);
             orderDetails.setBook(cartItem.getBook());
@@ -99,18 +103,15 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         Order savedOrder = orderRepository.save(order);
         OrderDTO orderDTO = ObjectMapperUtils.map(savedOrder, OrderDTO.class);
 
-//        To turn on kafka start zookeeper with this commands throw command line and uncomment try-catch block
-//        below and creating topic in kafkaConfig
-//        $ bin/zookeeper-server-start.sh config/zookeeper.properties
-//        $ bin/kafka-server-start.sh config/server.properties
-//
-//        try {
-//            String orderString = mapper.writeValueAsString(orderDTO);
-//            kafkaTemplate.send(orderTopic, savedOrder.getId().toString(), orderString);
-//        } catch (JsonProcessingException e) {
-//            log.error(ERROR_WHILE_MAPPING);
-//            throw new RuntimeException(e.getMessage());
-//        }
+        if (kafkaEnabled) {
+            try {
+                String orderString = mapper.writeValueAsString(orderDTO);
+                kafkaTemplate.send(orderTopic, savedOrder.getId().toString(), orderString);
+            } catch (JsonProcessingException e) {
+                log.error(ERROR_WHILE_MAPPING);
+                throw new RuntimeException(e.getMessage());
+            }
+        }
 
         return orderDTO;
     }
