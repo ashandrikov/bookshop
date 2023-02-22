@@ -2,7 +2,7 @@ package com.shandrikov.bookshop.services.implementations;
 
 import com.shandrikov.bookshop.DTOs.AuthenticationRequest;
 import com.shandrikov.bookshop.DTOs.AuthenticationResponse;
-import com.shandrikov.bookshop.configuration.JwtService;
+import com.shandrikov.bookshop.jwt.JwtService;
 import com.shandrikov.bookshop.domains.User;
 import com.shandrikov.bookshop.exceptions.UserExistException;
 import com.shandrikov.bookshop.repositories.UserRepository;
@@ -47,7 +47,10 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         try {
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(request.login(), request.password());
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                    request.login(),
+                    request.password()
+            );
             authManager.authenticate(authentication);
         } catch (AuthenticationException e) {
             log.error(AUTH_INVALID);

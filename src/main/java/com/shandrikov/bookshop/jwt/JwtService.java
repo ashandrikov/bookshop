@@ -1,4 +1,4 @@
-package com.shandrikov.bookshop.configuration;
+package com.shandrikov.bookshop.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,10 +21,10 @@ import static com.shandrikov.bookshop.utils.StringPool.JWT_INVALID;
 
 @Service
 public class JwtService {
-    @Value("${jwt.secret}")
+    @Value("${jwt.secretKey}")
     private String secretKey;
-    @Value("${jwt.expire}")
-    private long jwtExpire;
+    @Value("${jwt.tokenExpirationAfterDays}")
+    private long jwtExpireDays;
 
     public String generateToken(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails);
@@ -37,8 +38,9 @@ public class JwtService {
                 .builder()
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
+                .claim("roles", userDetails.getAuthorities())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpire))
+                .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(jwtExpireDays)))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -74,8 +76,8 @@ public class JwtService {
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-        } catch (JwtException | IllegalArgumentException e) {
-            throw new JwtException(JWT_INVALID);
+        } catch (JwtException e) {
+            throw new IllegalArgumentException (JWT_INVALID);
         }
         return claims;
     }

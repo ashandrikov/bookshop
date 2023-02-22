@@ -1,10 +1,12 @@
 package com.shandrikov.bookshop.configuration;
 
 import com.shandrikov.bookshop.exceptions.FilterChainExceptionHandler;
+import com.shandrikov.bookshop.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -32,10 +34,15 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain jwtFilterChain(HttpSecurity http) throws Exception {
         return http.securityMatcher("/restapi/**")
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.POST, "/restapi/auth/**").permitAll()
+                        .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .csrf(csrf -> csrf.disable())
+                .csrf().disable()
                 .httpBasic(Customizer.withDefaults())
+                .authenticationProvider(authenticationProvider)
+                .addFilterBefore(filterChainExceptionHandler, LogoutFilter.class)
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
@@ -62,9 +69,6 @@ public class SecurityConfiguration {
                     .deleteCookies("JSESSIONID", "remember-me")
                     .logoutSuccessUrl("/login")
                 .and()
-                .authenticationProvider(authenticationProvider)
-                .addFilterBefore(filterChainExceptionHandler, LogoutFilter.class)
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

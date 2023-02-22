@@ -1,4 +1,4 @@
-package com.shandrikov.bookshop.configuration;
+package com.shandrikov.bookshop.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -28,17 +28,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
+
         final String authHeader = request.getHeader("Authorization");
-        final String token;
-        final String userEmail;
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")){
             filterChain.doFilter(request,response);
             return;
         }
-        token = authHeader.substring(7);
-        userEmail = jwtService.extractUsername(token);
+
+        String token = authHeader.substring(7);
+        String userEmail = jwtService.extractUsername(token);
+
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+
             UserDetails userDetails = this.userService.loadUserByUsername(userEmail);
+
             if (jwtService.isTokenValid(token, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
