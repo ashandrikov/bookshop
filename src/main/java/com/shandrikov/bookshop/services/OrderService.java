@@ -7,7 +7,7 @@ import com.shandrikov.bookshop.domains.User;
 import java.util.List;
 
 public interface OrderService {
-    List<Order> getAllOrders();
+    List<OrderDTO> getAllOrders();
     void deleteAll();
     void deleteOrder(Order order);
     List<OrderDTO> getAllOrdersForUser(User user);

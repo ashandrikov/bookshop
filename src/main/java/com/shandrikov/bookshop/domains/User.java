@@ -80,4 +80,18 @@ public class User implements UserDetails {
     public String getUsernameAndRole() {
         return login + " | " + role.toString();
     }
+
+    public boolean isAdmin() {
+        return Role.ADMINISTRATOR.equals(role);
+    }
+
+    public boolean isEditor() {
+        return Role.EDITOR.equals(role);
+    }
+
+    public boolean isUser() {
+        return Role.USER.equals(role);
+    }
+
+
 }

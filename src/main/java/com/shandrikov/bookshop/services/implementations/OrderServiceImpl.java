@@ -17,8 +17,8 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
 
     @Override
-    public List<Order> getAllOrders() {
-        return orderRepository.findAll();
+    public List<OrderDTO> getAllOrders() {
+        return ObjectMapperUtils.mapAll(orderRepository.findAll(), OrderDTO.class);
     }
 
     @Override

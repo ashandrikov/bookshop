@@ -1,5 +1,6 @@
 package com.shandrikov.bookshop.configuration;
 
+import com.shandrikov.bookshop.enums.Role;
 import com.shandrikov.bookshop.exceptions.FilterChainExceptionHandler;
 import com.shandrikov.bookshop.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -24,6 +26,7 @@ import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfiguration {
     private final JwtAuthenticationFilter jwtAuthFilter;
@@ -36,6 +39,9 @@ public class SecurityConfiguration {
         return http.securityMatcher("/restapi/**")
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/restapi/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/restapi/book").hasAuthority(Role.EDITOR.toString())
+                        .requestMatchers("/restapi/admin/**").hasAuthority(Role.ADMINISTRATOR.toString())
+                        .requestMatchers("/restapi/cart/**", "/restapi/user/**").hasAuthority(Role.USER.toString())
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf().disable()
@@ -71,11 +77,4 @@ public class SecurityConfiguration {
                 .and()
                 .build();
     }
-
-//             TODO: set request matchers for web
-//            .requestMatchers(HttpMethod.POST, "/restapi/auth/**").permitAll()
-//            .requestMatchers(HttpMethod.POST, "/restapi/book").hasAuthority(Role.EDITOR.toString())
-//            .requestMatchers("/restapi/admin/**").hasAuthority(Role.ADMINISTRATOR.toString())
-//            .requestMatchers("/restapi/cart/**", "/restapi/user/**").hasAuthority(Role.USER.toString())
-//    }
 }

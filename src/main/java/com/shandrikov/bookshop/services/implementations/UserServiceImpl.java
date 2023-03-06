@@ -1,10 +1,12 @@
 package com.shandrikov.bookshop.services.implementations;
 
 import com.shandrikov.bookshop.DTOs.NewPasswordDTO;
+import com.shandrikov.bookshop.DTOs.UserDTO;
 import com.shandrikov.bookshop.domains.User;
 import com.shandrikov.bookshop.repositories.OrderRepository;
 import com.shandrikov.bookshop.repositories.UserRepository;
 import com.shandrikov.bookshop.services.UserService;
+import com.shandrikov.bookshop.utils.ObjectMapperUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -61,8 +63,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public List<UserDTO> findAll() {
+        return ObjectMapperUtils.mapAll(userRepository.findAll(), UserDTO.class);
     }
 
     @Transactional

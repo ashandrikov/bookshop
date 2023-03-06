@@ -23,7 +23,7 @@ public class RestOrderController {
 
     @GetMapping("/orders")
     public List<OrderDTO> getAll(){
-        return ObjectMapperUtils.mapAll(orderService.getAllOrders(), OrderDTO.class);
+        return orderService.getAllOrders();
     }
 
     @GetMapping("/order/{id}")

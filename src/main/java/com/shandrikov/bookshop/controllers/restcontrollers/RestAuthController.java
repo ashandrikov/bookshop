@@ -1,4 +1,4 @@
-package com.shandrikov.bookshop.controllers;
+package com.shandrikov.bookshop.controllers.restcontrollers;
 
 import com.shandrikov.bookshop.DTOs.AuthenticationRequest;
 import com.shandrikov.bookshop.DTOs.AuthenticationResponse;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/restapi/auth")
 @RequiredArgsConstructor
-public class AuthController {
+public class RestAuthController {
     private final AuthService authService;
 
     @PostMapping("/register")

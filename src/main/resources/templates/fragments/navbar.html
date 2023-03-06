@@ -4,12 +4,18 @@
             <a class="navbar-brand" href="books.html" th:href="@{/api/books}">BookShop</a>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
+                    <li th:if="${#authentication.principal.user}" class="nav-item">
                         <a class="nav-link active" aria-current="page" href="shopping-cart.html" th:href="@{/api/cart}">Shopping
                             cart</a>
                     </li>
-                    <li class="nav-item">
+                    <li th:if="${#authentication.principal.user}" class="nav-item">
                         <a class="nav-link active" href="orders.html" th:href="@{/api/orders}">Orders</a>
+                    </li>
+                    <li th:if="${#authentication.principal.editor}" class="nav-item">
+                        <a class="nav-link active" href="orders.html" th:href="@{/api/all-orders}">All orders</a>
+                    </li>
+                    <li th:if="${#authentication.principal.admin}" class="nav-item">
+                        <a class="nav-link active" href="users.html" th:href="@{/api/users}">Users</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" sec:authentication="principal.usernameAndRole"></a>
