@@ -3,7 +3,6 @@ package com.shandrikov.bookshop.controllers;
 import com.shandrikov.bookshop.domains.User;
 import com.shandrikov.bookshop.services.OrderService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,14 +16,12 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping("/orders")
-    @PreAuthorize("hasAuthority('USER')")
     public String getOrdersForUser(@AuthenticationPrincipal User user, Model model){
         model.addAttribute("orders", orderService.getAllOrdersForUser(user));
         return "orders";
     }
 
     @GetMapping("/all-orders")
-    @PreAuthorize("hasAuthority('EDITOR')")
     public String getAllOrders(Model model){
         model.addAttribute("orders", orderService.getAllOrders());
         return "orders";
