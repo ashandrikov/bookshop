@@ -19,7 +19,7 @@ public class RestAuthController {
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(@Valid @RequestBody AuthenticationRequest request){
-        return ResponseEntity.ok(authService.register(request));
+        return ResponseEntity.ok(authService.registerWithJWT(request));
     }
 
     @PostMapping("/authenticate")

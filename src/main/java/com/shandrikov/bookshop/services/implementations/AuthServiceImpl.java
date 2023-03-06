@@ -30,18 +30,27 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder encoder;
     private final JwtService jwtService;
     private final AuthenticationManager authManager;
+
     @Override
-    public AuthenticationResponse register(AuthenticationRequest request) {
+    public User register(AuthenticationRequest request) {
+        return checkAndSaveUser(request);
+    }
+
+    @Override
+    public AuthenticationResponse registerWithJWT(AuthenticationRequest request) {
+        User user = checkAndSaveUser(request);
+        String jwtToken = jwtService.generateToken(user);
+        return new AuthenticationResponse(jwtToken);
+    }
+    private User checkAndSaveUser(AuthenticationRequest request) {
         if (userRepository.findByLoginIgnoreCase(request.login()).isPresent()){
-            log.error(USER_EXISTS);
-            throw new UserExistException();
+            log.error(String.format(USER_EXISTS, request.login()));
+            throw new UserExistException(request.login());
         }
         User user = new User(request);
         user.setPassword(encoder.encode(user.getPassword()));
-        userRepository.save(user);
-        var jwtToken = jwtService.generateToken(user);
         log.info(String.format(USER_CREATED, user.getLogin()));
-        return new AuthenticationResponse(jwtToken);
+        return userRepository.save(user);
     }
 
     @Override
@@ -56,9 +65,9 @@ public class AuthServiceImpl implements AuthService {
             log.error(AUTH_INVALID);
             throw new BadCredentialsException(AUTH_INVALID);
         }
-        var user = userRepository.findByLoginIgnoreCase(request.login())
+        User user = userRepository.findByLoginIgnoreCase(request.login())
                 .orElseThrow(() -> new UsernameNotFoundException("Not found: " + request.login()));
-        var jwtToken = jwtService.generateToken(user);
+        String jwtToken = jwtService.generateToken(user);
         log.info(String.format(USER_AUTHENTICATED, user.getLogin()));
         return new AuthenticationResponse(jwtToken);
     }

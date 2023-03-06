@@ -51,6 +51,11 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
+    public boolean checkIfUsernameExists(String username) {
+        return userRepository.findByLoginIgnoreCase(username).isPresent();
+    }
+
+    @Override
     public void updatePassword(User user, NewPasswordDTO passwordDTO) {
         String newPassword = passwordDTO.getUpdatedPassword();
         if (encoder.matches(newPassword, user.getPassword())) {
