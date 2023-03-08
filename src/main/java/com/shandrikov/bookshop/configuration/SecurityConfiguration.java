@@ -63,7 +63,7 @@ public class SecurityConfiguration {
                     .requestMatchers(HttpMethod.GET,"/api/users").hasAuthority(Role.ADMINISTRATOR.toString())
                     .requestMatchers(HttpMethod.GET,"/api/orders", "/api/cart").hasAuthority(Role.USER.toString())
                     .requestMatchers(HttpMethod.GET,"/api/all-orders").hasAuthority(Role.EDITOR.toString())
-//                    .requestMatchers(HttpMethod.GET,"/api/cart").hasAuthority(Role.EDITOR.toString())
+                    .requestMatchers("/api/book/**").hasAuthority(Role.EDITOR.toString())
                 .anyRequest().authenticated()
                 .and()
                     .formLogin()

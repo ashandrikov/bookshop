@@ -11,6 +11,10 @@
 
 <div th:insert="~{fragments/navbar :: #navbar}"></div>
 
+<div th:if="${message != null}" class="alert alert-success text-center m-3">
+    [[${message}]]
+</div>
+
 <table class="table">
     <thead>
     <tr>
