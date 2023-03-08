@@ -15,4 +15,5 @@ public class StringPool {
     public static final String AUTH_INVALID = "Invalid login or password";
     public static final String MISS_PATH_VARIABLE = "Required path variable 'id' is not present.";
     public static final String ERROR_WHILE_MAPPING = "Error while mapping into String";
+    public static final String NO_BOOK_ID = "There is no the book with this id: ";
 }

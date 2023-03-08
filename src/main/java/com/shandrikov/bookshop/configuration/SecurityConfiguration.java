@@ -64,7 +64,7 @@ public class SecurityConfiguration {
                     .requestMatchers(HttpMethod.GET,"/api/orders", "/api/cart").hasAuthority(Role.USER.toString())
                     .requestMatchers(HttpMethod.GET,"/api/all-orders").hasAuthority(Role.EDITOR.toString())
                     .requestMatchers("/api/book/**").hasAuthority(Role.EDITOR.toString())
-                .anyRequest().authenticated()
+                    .anyRequest().authenticated()
                 .and()
                     .formLogin()
                     .loginPage("/login")
