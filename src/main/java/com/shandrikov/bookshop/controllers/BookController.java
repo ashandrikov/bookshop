@@ -13,6 +13,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import static com.shandrikov.bookshop.utils.StringPool.BOOK_ADDED;
+import static com.shandrikov.bookshop.utils.StringPool.BOOK_DELETED;
+import static com.shandrikov.bookshop.utils.StringPool.MESSAGE;
+import static com.shandrikov.bookshop.utils.StringPool.ERROR;
+
 @Controller
 @RequestMapping("/api")
 @RequiredArgsConstructor
@@ -35,7 +40,7 @@ public class BookController {
     @PostMapping("/book/save")
     public String saveBook(Book book, RedirectAttributes redirectAttributes){
         bookService.saveBook(book);
-        redirectAttributes.addFlashAttribute("message", "The book was added successfully!");
+        redirectAttributes.addFlashAttribute(MESSAGE, BOOK_ADDED);
         return "redirect:/api/books";
     }
 
@@ -44,9 +49,9 @@ public class BookController {
                              RedirectAttributes redirectAttributes){
         try {
             bookService.deleteOne(id);
-            redirectAttributes.addFlashAttribute("message", "The book was deleted successfully!");
+            redirectAttributes.addFlashAttribute(MESSAGE, BOOK_DELETED);
         } catch (BookNotFoundException | DataIntegrityViolationException ex) {
-            redirectAttributes.addFlashAttribute("message", ex.getMessage());
+            redirectAttributes.addFlashAttribute(ERROR, ex.getMessage());
         }
         return "redirect:/api/books";
     }

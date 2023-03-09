@@ -1,19 +1,31 @@
 <!doctype html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<head th:replace="fragments/base :: baseHead(~{::title})">
     <title>Bookshop</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-    <script src="https://kit.fontawesome.com/ad9809c437.js" crossorigin="anonymous"></script>
 </head>
+
+<!--TODO: delete on next commit-->
+<!--<head>-->
+<!--    <meta charset="utf-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1">-->
+<!--    <title>Bookshop</title>-->
+<!--    <link rel="icon" href="https://img.icons8.com/ios/256/open-book&#45;&#45;v1.png">-->
+<!--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"-->
+<!--          integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">-->
+<!--    <script src="https://kit.fontawesome.com/ad9809c437.js" crossorigin="anonymous"></script>-->
+<!--    <script src="../webjars/jquery/3.6.3/jquery.min.js"></script>-->
+<!--    <script type="text/javascript" src="../webjars/bootstrap/5.2.3/js/bootstrap.js"></script>-->
+<!--</head>-->
 <body>
 
 <div th:insert="~{fragments/navbar :: #navbar}"></div>
 
 <div th:if="${message != null}" class="alert alert-success text-center m-3">
     [[${message}]]
+</div>
+<div th:if="${error != null}" class="alert alert-danger text-center m-3">
+    [[${error}]]
 </div>
 
 <table class="table">
@@ -34,10 +46,15 @@
         <td th:text="${book.title}"></td>
         <td th:text="${book.year}"></td>
         <td th:text="${book.price}"></td>
-        <td th:if="${#authentication.principal.editor}"><div>
-            <i class="fa-solid fa-pen-to-square fa-2x mx-4"></i>
-            <a th:href="@{'book/delete/' + ${book.id}}"> <i class="fa-solid fa-trash fa-2x" title="Delete this book"></i></a>
-        </div></td>
+        <td th:if="${#authentication.principal.editor}">
+            <div>
+                <i class="fa-solid fa-pen-to-square fa-2x mx-4"></i>
+                <a class="link-delete"
+                   th:href="@{'book/delete/' + ${book.id}}"
+                   th:bookId="${book.id}">
+                    <i class="fa-solid fa-trash fa-2x" title="Delete this book"></i></a>
+            </div>
+        </td>
     </tr>
     </tbody>
 </table>
@@ -48,15 +65,38 @@
     </div>
 </form>
 
+<div class="modal fade text-center" id="confirmModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Delete confirmation</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" title="Close"></button>
+            </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
-        crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
-        integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
-        crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"
-        integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SY2XofN4zfuZxLkoj1gXtW8ANNCe9d5Y3eG5eD"
-        crossorigin="anonymous"></script>
+            <div class="modal-body">
+                <span id="confirmText">Are you sure you want to delete this book?</span>
+            </div>
+
+            <div class="modal-footer">
+                <a href="" class="btn btn-success" id="yesButton">Yes</a>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".link-delete").on("click", function (e) {
+            e.preventDefault();
+            link = $(this);
+            bookId = link.attr("bookId");
+            $("#yesButton").attr("href", link.attr("href"));
+            $("#confirmText").text("Are you sure you want to delete this book with Id: " + bookId + "?");
+            $("#confirmModal").modal('show');
+        })
+    })
+</script>
+
 </body>
 </html>
