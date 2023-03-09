@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import static com.shandrikov.bookshop.utils.StringPool.BOOK_ADDED;
+import static com.shandrikov.bookshop.utils.StringPool.BOOK_ADDED_EDITED;
 import static com.shandrikov.bookshop.utils.StringPool.BOOK_DELETED;
-import static com.shandrikov.bookshop.utils.StringPool.MESSAGE;
 import static com.shandrikov.bookshop.utils.StringPool.ERROR;
+import static com.shandrikov.bookshop.utils.StringPool.MESSAGE;
 
 @Controller
 @RequestMapping("/api")
@@ -34,13 +34,29 @@ public class BookController {
     public String addBook(Model model){
         Book book = new Book();
         model.addAttribute("book", book);
+        model.addAttribute("pageTitle", "Create new book");
         return "book-form";
+    }
+
+    @GetMapping("/book/edit/{id}")
+    public String editBook(@PathVariable(name = "id") Long id,
+                           Model model,
+                           RedirectAttributes redirectAttributes){
+        try {
+            Book book = bookService.getOne(id);
+            model.addAttribute("book", book);
+            model.addAttribute("pageTitle", "Edit book with Id: " + id);
+            return "book-form";
+        } catch (BookNotFoundException ex) {
+            redirectAttributes.addFlashAttribute(ERROR, ex.getMessage());
+            return "redirect:/api/books";
+        }
     }
 
     @PostMapping("/book/save")
     public String saveBook(Book book, RedirectAttributes redirectAttributes){
         bookService.saveBook(book);
-        redirectAttributes.addFlashAttribute(MESSAGE, BOOK_ADDED);
+        redirectAttributes.addFlashAttribute(MESSAGE, BOOK_ADDED_EDITED);
         return "redirect:/api/books";
     }
 

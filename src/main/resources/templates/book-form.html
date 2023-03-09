@@ -1,12 +1,13 @@
 <!doctype html>
 <html lang="en">
-<head th:replace="fragments/base :: baseHead((title = 'Bookshop new book'))"></head>
+<head th:replace="fragments/base :: baseHead((title = 'Bookshop manage'))"></head>
 <body>
 
 <div th:insert="~{fragments/navbar :: #navbar}"></div>
 
-<form class="row g-3 border border-secondary rounded m-5" th:action="@{../book/save}" method="post" th:object="${book}" style="max-width: 700px">
-    <h3 class="text-center">Add new book</h3>
+<form class="row g-3 border border-secondary rounded m-5" th:action="@{/api/book/save}" method="post" th:object="${book}" style="max-width: 700px">
+    <input type="hidden" th:field="*{id}"/>
+    <h3 class="text-center">[[${pageTitle}]]</h3>
     <div class="row g-3">
         <div class="col-3">
             <label class="col-sm-4 col-form-label">Author</label>
@@ -36,7 +37,7 @@
             <label for="price" class="col-form-label">Price</label>
         </div>
         <div class="col-9">
-            <input type="number" id="price" class="form-control" th:field="*{price}" required min="0" max="250">
+            <input type="number" id="price" class="form-control" th:field="*{price}" required min="0" max="250" step=".01">
         </div>
     </div>
     <div class="text-center">

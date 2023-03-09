@@ -22,15 +22,18 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public Book getOne(Long id){
+        return bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException(NO_BOOK_ID + id));
+    }
+
+    @Override
     public List<Book> getAllBooks(){
         return bookRepository.findAll();
     }
 
     @Override
     public void deleteOne(Long id) {
-        if (bookRepository.findById(id).isEmpty()){
-            throw new BookNotFoundException(NO_BOOK_ID + id);
-        }
+        bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException(NO_BOOK_ID + id));
         bookRepository.deleteById(id);
     }
 
