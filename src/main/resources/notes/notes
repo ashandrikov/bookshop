@@ -2,3 +2,18 @@ To turn on kafka start zookeeper: (in diff terminals, from kafka folder)
 
 $ bin/zookeeper-server-start.sh config/zookeeper.properties
 $ bin/kafka-server-start.sh config/server.properties
+
+TODO:
+
+UserServiceImpl: line 77, @Transactional method, test it in different ways, maybe put this annottion on method lavel or delete it?
+Other existing endpoints:
+    lock/unlock user
+    user: change password, name, surname
+    add book (inout number) to cart
+    delete book from cart
+    create order from cart
+    editor change status of order: pending -> completed/canceled
+Modal dialog to parameterize
+Js script to different file + parameterize it
+Enable csrf in UI part!
+Delete extra error messages in put- post- delete- endpoints in UI part

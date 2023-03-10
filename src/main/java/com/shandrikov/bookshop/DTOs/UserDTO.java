@@ -15,4 +15,8 @@ public class UserDTO {
     private Role role;
     private boolean accountNonLocked;
     private Collection<? extends GrantedAuthority> authorities;
+
+    public boolean isAdmin() {
+        return Role.ADMINISTRATOR.equals(role);
+    }
 }

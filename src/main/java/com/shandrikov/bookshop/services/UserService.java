@@ -10,7 +10,7 @@ import java.util.List;
 public interface UserService {
     List<UserDTO> findAll();
     boolean checkIfUsernameExists(String username);
-    void deleteUser(String email);
+    void deleteOne(String email);
     void updatePassword(User user, NewPasswordDTO password);
     User changeUserRole(String login);
     User lockOrUnlockUser(String login);

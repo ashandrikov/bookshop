@@ -32,7 +32,7 @@
         <td th:text="${book.price}"></td>
         <td th:if="${#authentication.principal.editor}">
             <div>
-                <a class="link-edit darkgreen"
+                <a class="darkgreen"
                    th:href="@{'book/edit/' + ${book.id}}"
                    th:bookId="${book.id}">
                     <i class="fa-solid fa-pen-to-square fa-2x mx-4" title="Edit this book"></i></a>

@@ -61,6 +61,7 @@ public class SecurityConfiguration {
                     .requestMatchers("/login").permitAll()
                     .requestMatchers("/css/*", "/js/*").permitAll()
                     .requestMatchers(HttpMethod.GET,"/api/users").hasAuthority(Role.ADMINISTRATOR.toString())
+                    .requestMatchers("/api/user/**").hasAuthority(Role.ADMINISTRATOR.toString())
                     .requestMatchers(HttpMethod.GET,"/api/orders", "/api/cart").hasAuthority(Role.USER.toString())
                     .requestMatchers(HttpMethod.GET,"/api/all-orders").hasAuthority(Role.EDITOR.toString())
                     .requestMatchers("/api/book/**").hasAuthority(Role.EDITOR.toString())

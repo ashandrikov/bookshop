@@ -3,6 +3,7 @@ package com.shandrikov.bookshop.services.implementations;
 import com.shandrikov.bookshop.DTOs.NewPasswordDTO;
 import com.shandrikov.bookshop.DTOs.UserDTO;
 import com.shandrikov.bookshop.domains.User;
+import com.shandrikov.bookshop.exceptions.UserNotFoundException;
 import com.shandrikov.bookshop.repositories.OrderRepository;
 import com.shandrikov.bookshop.repositories.UserRepository;
 import com.shandrikov.bookshop.services.UserService;
@@ -25,6 +26,7 @@ import static com.shandrikov.bookshop.enums.Role.ADMINISTRATOR;
 import static com.shandrikov.bookshop.enums.Role.EDITOR;
 import static com.shandrikov.bookshop.enums.Role.USER;
 import static com.shandrikov.bookshop.utils.StringPool.CANNOT_TOGGLE_ADMINISTRATOR;
+import static com.shandrikov.bookshop.utils.StringPool.NO_USER_LOGIN;
 import static com.shandrikov.bookshop.utils.StringPool.PASSWORDS_EQUAL;
 import static com.shandrikov.bookshop.utils.StringPool.PASSWORD_UPDATED_USER;
 import static com.shandrikov.bookshop.utils.StringPool.USER_NOT_FOUND;
@@ -74,13 +76,11 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Transactional
     @Override
-    public void deleteUser(String login) {
-        User userByEmail = userRepository.findByLoginIgnoreCase(login)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, USER_NOT_FOUND));
+    public void deleteOne(String login) {
+        User userByEmail = userRepository.findByLoginIgnoreCase(login).orElseThrow(() -> new UserNotFoundException(NO_USER_LOGIN + login));
         if (userByEmail.getAuthorities().contains(ADMINISTRATOR)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, CANNOT_TOGGLE_ADMINISTRATOR);
         }
-
         log.info(String.format("User '%s' was deleted", login));
         orderRepository.deleteByUser(userByEmail);
         userRepository.delete(userByEmail);
@@ -88,8 +88,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Override
     public User changeUserRole(String login) {
-        User userByLogin = userRepository.findByLoginIgnoreCase(login)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, USER_NOT_FOUND));
+        User userByLogin = userRepository.findByLoginIgnoreCase(login).orElseThrow(() -> new UserNotFoundException(NO_USER_LOGIN + login));
         switch (userByLogin.getRole()) {
             case USER -> userByLogin.setRole(EDITOR);
             case EDITOR -> userByLogin.setRole(USER);
