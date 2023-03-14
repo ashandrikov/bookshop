@@ -5,6 +5,6 @@ $(document).ready(function () {
         userLogin = link.attr("userLogin");
         $("#yesButton").attr("href", link.attr("href"));
         $("#confirmText").text("Are you sure you want to delete this user with login: " + userLogin + "?");
-        $("#confirmModalDeleteUser").modal('show');
+        $("#confirmModal").modal('show');
     })
 })

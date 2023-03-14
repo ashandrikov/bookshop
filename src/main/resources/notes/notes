@@ -8,12 +8,12 @@ TODO:
 Other existing endpoints:
     lock/unlock user
     user: change password, name, surname
-    add book (inout number) to cart
-    delete book from cart
-    create order from cart
     editor change status of order: pending -> completed/canceled
-Modal dialog to parameterize
 Js script to different file + parameterize it
 Enable csrf in UI part!
 Delete extra error messages in put- post- delete- endpoints in UI part
-To discover how to use POST/PUT with icons (REST - standart) // or change @PutMapping("/user/togglerole/{login}") -> GetRequest
+
+
+
+
+

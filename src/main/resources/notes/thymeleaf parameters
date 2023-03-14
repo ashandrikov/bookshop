@@ -1,0 +1,14 @@
+<div class="modal fade text-center" id="confirmModalDeleteUser" th:fragment="deleteUser(smth)">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <p th:text="${smth}"></p>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div th:insert="~{fragments/modal :: #confirmModalDeleteUser('Example')}"></div>
