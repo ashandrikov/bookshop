@@ -1,18 +1,24 @@
 <!doctype html>
 <html lang="en">
-<head th:replace="fragments/base :: baseHead()"></head>
+<head th:replace="~{fragments/base :: baseHead()}"></head>
 <body>
 
 <div th:insert="~{fragments/navbar :: #navbar}"></div>
 
-<table class="table">
+<div th:if="${error != null}" class="alert alert-danger text-center m-3">
+    [[${error}]]
+</div>
+
+<table class="table"
+    th:if="${notEmpty}">
     <thead>
     <tr>
         <th scope="col">Author</th>
         <th scope="col">Title</th>
         <th scope="col">Year</th>
         <th scope="col">Quantity</th>
-        <th scope="col">Price</th>
+        <th scope="col">Price per one</th>
+        <th scope="col"></th>
     </tr>
     </thead>
     <tbody>
@@ -22,9 +28,57 @@
             <td th:text="${cartItem.book.year}"></td>
             <td th:text="${cartItem.quantity}"></td>
             <td th:text="${cartItem.book.price}"></td>
+            <td>
+                <div>
+                    <a class="darkgreen"
+                       th:href="@{'cart/add/' + ${cartItem.book.id} + '/1'}">
+                        <i class="fa-solid fa-square-plus fa-2x mx-4" title="Add one"></i></a>
+                    <a class="brown"
+                       th:href="@{'cart/add/' + ${cartItem.book.id} + '/-1'}">
+                        <i class="fa-solid fa-square-minus fa-2x" title="Remove one"></i></a>
+                </div>
+            </td>
         </tr>
     </tbody>
 </table>
+
+<form th:if="${notEmpty}" class="row g-3">
+    <div>
+        <button th:href="@{/api/cart/order}" type="submit" value="Submit" class="btn btn-primary btn-lg m-3 place-order">Create order</button>
+    </div>
+</form>
+
+<div class="modal fade text-center" id="confirmModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Create order confirmation</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" title="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <span id="confirmText">Are you sure you want to create order from your shopping cart?</span>
+            </div>
+
+            <div class="modal-footer">
+                <a href="" class="btn btn-success" id="yesButton">Yes</a>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".place-order").on("click", function (e) {
+            e.preventDefault();
+            link = $(this);
+            $("#yesButton").attr("href", link.attr("href"));
+            $("#confirmText").text("Are you sure you want to create order from your shopping cart?");
+            $("#confirmModal").modal('show');
+        })
+    })
+</script>
 
 </body>
 </html>

@@ -1,23 +1,27 @@
 <!doctype html>
 <html lang="en">
-<head th:replace="fragments/base :: baseHead()"></head>
+<head th:replace="~{fragments/base :: baseHead()}"></head>
 <body>
 
 <div th:insert="~{fragments/navbar :: #navbar}"></div>
 
+<div th:if="${message != null}" class="alert alert-success text-center m-3">
+    [[${message}]]
+</div>
+
 <table class="table">
     <thead>
     <tr>
-        <th scope="col">Status</th>
         <th scope="col">Time</th>
         <th scope="col">Total Price</th>
+        <th scope="col">Status</th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="order: ${orders}">
-        <td th:text="${order.status}"></td>
         <td th:text="${#temporals.format(order.orderTime, 'dd.MM.yyyy HH:mm')}"></td>
         <td th:text="${order.totalOrderPrice}"></td>
+        <td th:text="${order.status}"></td>
     </tr>
     </tbody>
 </table>

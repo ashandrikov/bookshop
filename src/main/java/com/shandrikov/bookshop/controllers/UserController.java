@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -28,7 +28,7 @@ public class UserController {
         return "users";
     }
 
-    @PutMapping("/user/togglerole/{login}")
+    @PostMapping("/user/togglerole/{login}")
     public String toggleUserRole(@PathVariable("login") String login,
                                  RedirectAttributes redirectAttributes) {
         try {
@@ -41,7 +41,7 @@ public class UserController {
     }
 
     @GetMapping("/user/delete/{login}")
-    public String deleteBook(@PathVariable(name = "login") String login,
+    public String deleteUser(@PathVariable(name = "login") String login,
                              RedirectAttributes redirectAttributes){
         try {
             userService.deleteOne(login);

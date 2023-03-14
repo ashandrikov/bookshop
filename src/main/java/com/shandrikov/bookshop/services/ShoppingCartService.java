@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface ShoppingCartService {
     int addBook(long bookId, int quantity, User user);
+    boolean notEmpty(User user);
     void deleteItem(long bookId, User user);
     List<CartItem> getAll(User user);
     OrderDTO createOrder(User user);

@@ -8,6 +8,9 @@ import com.shandrikov.bookshop.domains.CartItem;
 import com.shandrikov.bookshop.domains.Order;
 import com.shandrikov.bookshop.domains.OrderDetails;
 import com.shandrikov.bookshop.domains.User;
+import com.shandrikov.bookshop.exceptions.BookNotFoundException;
+import com.shandrikov.bookshop.exceptions.EmptyCartException;
+import com.shandrikov.bookshop.exceptions.InvalidNumberBooksException;
 import com.shandrikov.bookshop.repositories.BookRepository;
 import com.shandrikov.bookshop.repositories.CartItemRepository;
 import com.shandrikov.bookshop.repositories.OrderRepository;
@@ -16,19 +19,19 @@ import com.shandrikov.bookshop.utils.ObjectMapperUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
 
-import static com.shandrikov.bookshop.utils.StringPool.BOOK_NOT_FOUND;
+import static com.shandrikov.bookshop.utils.StringPool.EMPTY_CART;
 import static com.shandrikov.bookshop.utils.StringPool.ERROR_WHILE_MAPPING;
-import static com.shandrikov.bookshop.utils.StringPool.INVALID_QUANTITY;
+import static com.shandrikov.bookshop.utils.StringPool.INVALID_QUANTITY_MORE_10;
+import static com.shandrikov.bookshop.utils.StringPool.INVALID_QUANTITY_NO_IN_CART;
+import static com.shandrikov.bookshop.utils.StringPool.NO_BOOK_ID;
 
 @Service
 @RequiredArgsConstructor
@@ -51,9 +54,13 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
+    public boolean notEmpty(User user) {
+        return !cartItemRepository.findByUser(user).isEmpty();
+    }
+
+    @Override
     public int addBook(long bookId, int quantity, User user) {
-        Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, BOOK_NOT_FOUND));
+        Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookNotFoundException(NO_BOOK_ID + bookId));
         int updatedQuantity = quantity;
         CartItem cartItem;
         Optional<CartItem> cartItemOpt = cartItemRepository.findByUserAndBook(user, book);
@@ -61,12 +68,15 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             cartItem = cartItemOpt.get();
             updatedQuantity += cartItem.getQuantity();
         } else {
+            if (quantity < 1) {
+                throw new InvalidNumberBooksException(INVALID_QUANTITY_NO_IN_CART);
+            }
             cartItem = new CartItem();
             cartItem.setUser(user);
             cartItem.setBook(book);
             cartItemRepository.save(cartItem);
         }
-        if (updatedQuantity > 10) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, INVALID_QUANTITY);
+        if (updatedQuantity > 10) throw new InvalidNumberBooksException(INVALID_QUANTITY_MORE_10);
         if (updatedQuantity < 1) {
             cartItemRepository.deleteByUserAndBook(user.getId(), bookId);
             return 0;
@@ -79,7 +89,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Override
     public void deleteItem(long bookId, User user) {
         bookRepository.findById(bookId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, BOOK_NOT_FOUND));
+                .orElseThrow(() -> new BookNotFoundException(NO_BOOK_ID + bookId));
 
         //Example: how to get user info in any point of the app. To clean code delete line below and change the parameter -> user.getId()
         User auth = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -90,6 +100,9 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     public OrderDTO createOrder(User user) {
         Order order = new Order();
         List<CartItem> listCartItems = cartItemRepository.findByUser(user);
+        if(listCartItems.isEmpty()) {
+            throw new EmptyCartException(EMPTY_CART);
+        }
         for (CartItem cartItem : listCartItems) {
             OrderDetails orderDetails = new OrderDetails();
             orderDetails.setOrder(order);

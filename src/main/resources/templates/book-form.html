@@ -5,7 +5,11 @@
 
 <div th:insert="~{fragments/navbar :: #navbar}"></div>
 
-<form class="row g-3 border border-secondary rounded m-5" th:action="@{/api/book/save}" method="post" th:object="${book}" style="max-width: 700px">
+<form class="row g-3 border border-secondary rounded m-5"
+      th:action="@{/api/book/save}"
+      method="post"
+      th:object="${book}"
+      style="max-width: 700px">
     <input type="hidden" th:field="*{id}"/>
     <h3 class="text-center">[[${pageTitle}]]</h3>
     <div class="row g-3">

@@ -5,7 +5,6 @@ $ bin/kafka-server-start.sh config/server.properties
 
 TODO:
 
-UserServiceImpl: line 77, @Transactional method, test it in different ways, maybe put this annottion on method lavel or delete it?
 Other existing endpoints:
     lock/unlock user
     user: change password, name, surname
@@ -17,3 +16,4 @@ Modal dialog to parameterize
 Js script to different file + parameterize it
 Enable csrf in UI part!
 Delete extra error messages in put- post- delete- endpoints in UI part
+To discover how to use POST/PUT with icons (REST - standart) // or change @PutMapping("/user/togglerole/{login}") -> GetRequest

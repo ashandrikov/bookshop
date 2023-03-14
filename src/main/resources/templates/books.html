@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-<head th:replace="fragments/base :: baseHead()"></head>
+<head th:replace="~{fragments/base :: baseHead()}"></head>
 <body>
 
 <div th:insert="~{fragments/navbar :: #navbar}"></div>
@@ -21,6 +21,7 @@
         <th scope="col">Year</th>
         <th scope="col">Price</th>
         <th th:if="${#authentication.principal.editor}" scope="col"></th>
+        <th th:if="${#authentication.principal.user}" scope="col"></th>
     </tr>
     </thead>
     <tbody>
@@ -42,11 +43,22 @@
                     <i class="fa-solid fa-trash fa-2x" title="Delete this book"></i></a>
             </div>
         </td>
+        <td th:if="${#authentication.principal.user}">
+            <div>
+                <a class="darkgreen"
+                   th:href="@{'cart/add/' + ${book.id} + '/1'}">
+                    <i class="fa-solid fa-square-plus fa-2x mx-4" title="Add one to cart"></i></a>
+                <a class="brown"
+                   th:href="@{'cart/add/' + ${book.id} + '/-1'}">
+                    <i class="fa-solid fa-square-minus fa-2x" title="Remove one from cart"></i></a>
+            </div>
+        </td>
     </tr>
     </tbody>
 </table>
 
-<form th:if="${#authentication.principal.editor}" class="row g-3" th:action="@{../api/book/new}" method="get">
+<form th:if="${#authentication.principal.editor}" class="row g-3"
+      th:action="@{../api/book/new}" method="POST">
     <div>
         <button type="submit" value="Submit" class="btn btn-primary btn-lg m-3">Add new book</button>
     </div>
