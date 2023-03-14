@@ -32,3 +32,12 @@
         </div>
     </nav>
 </div>
+
+<div id="message">
+    <div th:if="${message != null}" class="alert alert-success text-center m-3">
+        [[${message}]]
+    </div>
+    <div th:if="${error != null}" class="alert alert-danger text-center m-3">
+        [[${error}]]
+    </div>
+</div>
